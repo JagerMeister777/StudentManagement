@@ -23,6 +23,12 @@ dependencies {
 	// 追加機能、ユーティリティ
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
 
+	// MySQLドライバ
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// MyBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
