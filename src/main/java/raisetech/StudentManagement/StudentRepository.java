@@ -1,5 +1,6 @@
 package raisetech.StudentManagement;
 
+import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,7 +14,7 @@ public interface StudentRepository {
   Student searchStudentInfo(String name);
 
   @Select("SELECT * FROM student_info")
-  Student getAllStudent();
+  List<Student> getAllStudent();
 
   @Insert("INSERT student_info VALUES(#{name}, #{age})")
   void resisterStudent(String name, int age);
