@@ -1,6 +1,6 @@
 package raisetech.StudentManagement;
 
-import org.apache.ibatis.annotations.Delete;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,6 +27,11 @@ public class StudentManagementApplication {
 	public String searchStudentInfo(@RequestParam("name") String name){
 		Student student = repository.searchStudentInfo(name);
 		return student.getName() + " " + student.getAge() + "歳";
+	}
+
+	@GetMapping("/student/list")
+	public List<Student> getStudentList(){
+    return repository.getAllStudent();
 	}
 
 	@PostMapping("/student")
