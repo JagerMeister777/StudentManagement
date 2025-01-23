@@ -1,0 +1,12 @@
+# buildディレクトリを無視
+# ビルド成果物（コンパイル後のファイルやJARファイル）
+build/
+
+# Gradleディレクトリを無視
+# Gradleのキャッシュや一時ファイル
+# プロジェクト固有のGradle設定
+.gradle/
+gradle/
+
+# IntelliJ IDEAのプロジェクト設定ディレクトリを無視
+.idea/
