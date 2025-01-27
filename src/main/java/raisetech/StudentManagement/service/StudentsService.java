@@ -7,12 +7,12 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.repository.StudentsRepository;
 
 @Service
-public class StudentService {
+public class StudentsService {
 
   private StudentsRepository repository;
 
   @Autowired
-  public StudentService(StudentsRepository repository) {
+  public StudentsService(StudentsRepository repository) {
     this.repository = repository;
   }
 

@@ -7,12 +7,12 @@ import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.repository.CoursesRepository;
 
 @Service
-public class CourseService {
+public class CoursesService {
 
   private CoursesRepository repository;
 
   @Autowired
-  public CourseService(CoursesRepository repository) {
+  public CoursesService(CoursesRepository repository) {
     this.repository = repository;
   }
 

@@ -2,19 +2,18 @@ package raisetech.StudentManagement.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Course;
-import raisetech.StudentManagement.service.CourseService;
+import raisetech.StudentManagement.service.CoursesService;
 
 @RestController
-public class CourseController {
+public class CoursesController {
 
-  private CourseService service;
+  private CoursesService service;
 
   @Autowired
-  public CourseController(CourseService service) {
+  public CoursesController(CoursesService service) {
     this.service = service;
   }
 
