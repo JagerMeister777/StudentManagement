@@ -37,13 +37,14 @@ public class StudentsCoursesService {
    * @return Javaフルコースの受講生リスト
    */
   public List<StudentInfo> getStudentsCoursesList() {
-    // TODO 「Javaフルコース」のIDを取得して、「Javaフルコース」のコース情報のみを抽出する。
+    // 「Javaフルコース」のIDを取得して、「Javaフルコース」のコース情報のみを抽出する。
     //  受講生IDから参照して絞り込みした学生リストをコントローラーに渡す。
 
     // ID:1はJavaフルコース
     // TODO 動的にコース名で検索できるようにする
     int courseId = 1;
 
+    // TODO 例外処理の実装
     // 対象のコースを受講している受講生情報の全件取得
     List<StudentsCourses> studentsCoursesList = studentsCoursesRepository.getStudentsCourses()
         .stream()
@@ -52,6 +53,7 @@ public class StudentsCoursesService {
 
     List<StudentInfo> studentInfoList = new ArrayList<>();
 
+    // TODO 例外処理の実装
     // StudentInfoクラスで出力
     for(int i = 1; i < studentsCoursesList.size(); i++) {
       StudentInfo studentInfo = new StudentInfo();

@@ -26,6 +26,7 @@ public class CoursesService {
    * @return コース情報の全件リスト
    */
   public List<Course> getCoursesList(){
+    // TODO 例外処理の実装
     return repository.getCoursesList();
   }
 
@@ -35,6 +36,7 @@ public class CoursesService {
    * @return コース名
    */
   public String findByCourseId(int id) {
+    // TODO 例外処理の実装
     Course course = repository.findByCourseId(id);
     return course.getName();
   }

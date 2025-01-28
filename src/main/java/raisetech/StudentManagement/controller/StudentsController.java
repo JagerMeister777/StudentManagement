@@ -13,14 +13,10 @@ import raisetech.StudentManagement.service.StudentsService;
 @RestController
 public class StudentsController {
 
-  /**
-   * 受講生情報のService
-   */
+  /** 受講生情報のService */
   private StudentsService studentsService;
 
-  /**
-   * 受講生が受講しているコース情報を管理するService
-   */
+  /** 受講生コース情報のService */
   private StudentsCoursesService studentsCoursesService;
 
   @Autowired
