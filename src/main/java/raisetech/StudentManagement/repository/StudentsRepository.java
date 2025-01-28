@@ -5,9 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import raisetech.StudentManagement.data.Student;
 
-/**
- * 受講生情報のRepository
- */
+/**　受講生情報のRepository　*/
 @Mapper
 public interface StudentsRepository {
 

@@ -9,9 +9,7 @@ import raisetech.StudentManagement.data.StudentInfo;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 
-/**
- * 受講生コース情報のService
- */
+/** 受講生コース情報のService */
 @Service
 public class StudentsCoursesService {
 

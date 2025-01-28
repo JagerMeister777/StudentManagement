@@ -13,9 +13,7 @@ import raisetech.StudentManagement.repository.StudentsRepository;
 @Service
 public class StudentsService {
 
-  /**
-   * 学生情報のRepository
-   */
+  /** 学生情報のRepository */
   private StudentsRepository repository;
 
   @Autowired
@@ -23,6 +21,10 @@ public class StudentsService {
     this.repository = repository;
   }
 
+  /**
+   * 30歳の受講生の検索
+   * @return 30歳の受講生リスト
+   */
   public List<Student> getStudentsList() {
     // 絞り込み検索。年齢が30代の人のみ抽出する。
     // 抽出したリストをコントローラーに渡す。

@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.repository.CoursesRepository;
 
-/**
- * コース情報のService
- */
+/** コース情報のService */
 @Service
 public class CoursesService {
 

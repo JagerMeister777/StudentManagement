@@ -10,9 +10,7 @@ import raisetech.StudentManagement.service.CoursesService;
 @RestController
 public class CoursesController {
 
-  /**
-   * コース情報のService
-   */
+  /**　コース情報のService　*/
   private CoursesService service;
 
   @Autowired
