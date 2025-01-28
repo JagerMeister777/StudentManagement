@@ -10,6 +10,9 @@ import raisetech.StudentManagement.service.CoursesService;
 @RestController
 public class CoursesController {
 
+  /**
+   * コース情報のService
+   */
   private CoursesService service;
 
   @Autowired
@@ -17,10 +20,13 @@ public class CoursesController {
     this.service = service;
   }
 
+  /**
+   * コース情報を全件検索
+   * @return コース情報の全件リスト
+   */
   @GetMapping("/courses")
   public List<Course> getCoursesList() {
     return service.getCoursesList();
   }
-
 
 }
