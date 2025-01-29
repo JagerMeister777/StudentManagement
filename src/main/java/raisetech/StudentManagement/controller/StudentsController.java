@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentInfo;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.service.StudentsCoursesService;
 import raisetech.StudentManagement.service.StudentsService;
 
@@ -41,7 +40,7 @@ public class StudentsController {
    * @return 受講生情報(受講生の名前、受講しているコース、受講開始日、受講終了日)
    */
   @GetMapping("/studentsCourses")
-  public List<StudentInfo> getStudentsCoursesList() {
+  public List<StudentsCoursesDTO> getStudentsCoursesList() {
     return studentsCoursesService.getStudentsCoursesList();
   }
 }
