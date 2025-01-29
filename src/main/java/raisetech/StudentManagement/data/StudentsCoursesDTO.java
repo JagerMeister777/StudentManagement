@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentInfo {
+public class StudentsCoursesDTO {
 
   private String studentName;
   private String courseName;
