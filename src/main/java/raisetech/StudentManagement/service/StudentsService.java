@@ -31,7 +31,7 @@ public class StudentsService {
     // TODO 例外処理の実装
     return repository.getStudentsList()
         .stream()
-        .filter(student -> student.getAge() == 30)
+        .filter(student -> student.getAge() >= 30 && student.getAge() < 40)
         .toList();
   }
 
