@@ -29,10 +29,7 @@ public class StudentsService {
     // 絞り込み検索。年齢が30代の人のみ抽出する。
     // 抽出したリストをコントローラーに渡す。
     // TODO 例外処理の実装
-    return repository.getStudentsList()
-        .stream()
-        .filter(student -> student.getAge() >= 30 && student.getAge() < 40)
-        .toList();
+    return repository.getStudentsList();
   }
 
   /**
