@@ -29,8 +29,8 @@ public class StudentsCoursesService {
     this.coursesService = coursesService;
   }
 
-  public List<StudentsCourses> getStudentCourses() {
-    return studentsCoursesRepository.getStudentsCourses();
+  public List<StudentsCourses> getStudentsCoursesList(int studentId) {
+    return studentsCoursesRepository.getStudentsCoursesList(studentId);
   }
 
   /**

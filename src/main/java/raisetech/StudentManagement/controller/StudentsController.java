@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
-import raisetech.StudentManagement.dmain.StudentDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentsCoursesService;
 import raisetech.StudentManagement.service.StudentsService;
 
@@ -50,6 +50,6 @@ public class StudentsController {
 
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentDetail() {
-    return studentConverter.studentConverter(studentsService.getStudentsList(),studentsCoursesService.getStudentCourses());
+    return studentConverter.studentConverter(studentsService.getStudentsList());
   }
 }
