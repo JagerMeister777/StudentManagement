@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
-import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentsCoursesService;
 import raisetech.StudentManagement.service.StudentsService;
 
@@ -47,12 +45,18 @@ public class StudentsController {
    */
   @GetMapping("/studentsCourses")
   public List<StudentsCoursesDTO> getStudentsCoursesList() {
-    return studentsCoursesService.getStudentsCoursesList();
+    return studentsCoursesService.getJavaStudentsCoursesList();
   }
 
-  @GetMapping("/studentList")
+  @GetMapping("/studentsList")
   public String getStudentDetail(Model model) {
     model.addAttribute("studentList",studentConverter.studentConverter(studentsService.getStudentsList()));
     return "studentList";
+  }
+
+  @GetMapping("/studentsCoursesList")
+  public String getStudentCoursesList(Model model) {
+    model.addAttribute("studentsCoursesDTO",studentsCoursesService.getAllStudentsCoursesList());
+    return "studentsCoursesList";
   }
 }

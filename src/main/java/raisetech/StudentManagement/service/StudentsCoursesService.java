@@ -33,11 +33,30 @@ public class StudentsCoursesService {
     return studentsCoursesRepository.getStudentsCoursesList(studentId);
   }
 
+  public List<StudentsCoursesDTO> getAllStudentsCoursesList() {
+    List<StudentsCourses> allStudentsCoursesList = studentsCoursesRepository.getAllStudentsCoursesList();
+
+    List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
+
+    for(StudentsCourses studentsCourses: allStudentsCoursesList) {
+      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
+
+      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()));
+      studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
+      studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
+      studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
+
+      studentsCoursesDTOList.add(studentsCoursesDTO);
+    }
+
+    return studentsCoursesDTOList;
+  }
+
   /**
    * 受講生の条件検索（Javaフルコースの学生を検索）
    * @return Javaフルコースの受講生リスト
    */
-  public List<StudentsCoursesDTO> getStudentsCoursesList() {
+  public List<StudentsCoursesDTO> getJavaStudentsCoursesList() {
     // 「Javaフルコース」のIDを取得して、「Javaフルコース」のコース情報のみを抽出する。
     //  受講生IDから参照して絞り込みした学生リストをコントローラーに渡す。
 
