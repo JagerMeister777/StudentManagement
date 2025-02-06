@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
+import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentsCoursesService;
 import raisetech.StudentManagement.service.StudentsService;
 
@@ -18,11 +19,14 @@ public class StudentsController {
   /** 受講生コース情報のService */
   private StudentsCoursesService studentsCoursesService;
 
+  private StudentConverter studentConverter;
+
   @Autowired
   public StudentsController(StudentsService studentsService,
-      StudentsCoursesService studentsCoursesService) {
+      StudentsCoursesService studentsCoursesService, StudentConverter studentConverter) {
     this.studentsService = studentsService;
     this.studentsCoursesService = studentsCoursesService;
+    this.studentConverter = studentConverter;
   }
 
 
@@ -42,5 +46,10 @@ public class StudentsController {
   @GetMapping("/studentsCourses")
   public List<StudentsCoursesDTO> getStudentsCoursesList() {
     return studentsCoursesService.getStudentsCoursesList();
+  }
+
+  @GetMapping("/studentList")
+  public List<StudentDetail> getStudentDetail() {
+    return studentConverter.studentConverter(studentsService.getStudentsList());
   }
 }

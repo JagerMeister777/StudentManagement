@@ -29,6 +29,10 @@ public class StudentsCoursesService {
     this.coursesService = coursesService;
   }
 
+  public List<StudentsCourses> getStudentsCoursesList(int studentId) {
+    return studentsCoursesRepository.getStudentsCoursesList(studentId);
+  }
+
   /**
    * 受講生の条件検索（Javaフルコースの学生を検索）
    * @return Javaフルコースの受講生リスト
