@@ -48,12 +48,22 @@ public class StudentsController {
     return studentsCoursesService.getJavaStudentsCoursesList();
   }
 
+  /**
+   * 受講生リストをテンプレートにレンダリング
+   * @param model 受講生リスト
+   * @return studentList.html
+   */
   @GetMapping("/studentsList")
   public String getStudentDetail(Model model) {
     model.addAttribute("studentList",studentConverter.studentConverter(studentsService.getStudentsList()));
     return "studentList";
   }
 
+  /**
+   * 受講生コース情報リストをテンプレートにレンダリング
+   * @param model 受講生コース情報リスト
+   * @return studentsCoursesList.html
+   */
   @GetMapping("/studentsCoursesList")
   public String getStudentCoursesList(Model model) {
     model.addAttribute("studentsCoursesDTO",studentsCoursesService.getAllStudentsCoursesList());

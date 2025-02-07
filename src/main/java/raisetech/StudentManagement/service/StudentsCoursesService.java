@@ -29,10 +29,19 @@ public class StudentsCoursesService {
     this.coursesService = coursesService;
   }
 
+  /**
+   * 特定の受講生コース情報を取得する
+   * @param studentId 受講生ID
+   * @return リスト型の受講生コース情報（複数件の可能性を考慮）
+   */
   public List<StudentsCourses> getStudentsCoursesList(int studentId) {
     return studentsCoursesRepository.getStudentsCoursesList(studentId);
   }
 
+  /**
+   * 受講生コース情報の全件を取得し、DTOへ変換してリストで返す
+   * @return 全件StudentCoursesDTO
+   */
   public List<StudentsCoursesDTO> getAllStudentsCoursesList() {
     List<StudentsCourses> allStudentsCoursesList = studentsCoursesRepository.getAllStudentsCoursesList();
 

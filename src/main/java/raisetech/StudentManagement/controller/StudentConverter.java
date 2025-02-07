@@ -20,6 +20,11 @@ public class StudentConverter {
     this.studentsCoursesService = studentsCoursesService;
   }
 
+  /**
+   * 受講生情報とそれに紐づく受講しているコース情報を統合する
+   * @param students 受講生リスト
+   * @return List型のstudentDetails
+   */
   public List<StudentDetail> studentConverter(List<Student> students) {
     List<StudentDetail> studentDetails = new ArrayList<>();
     students.forEach(student -> {
