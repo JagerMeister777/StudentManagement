@@ -9,6 +9,9 @@ import raisetech.StudentManagement.data.StudentsCourses;
 @Mapper
 public interface StudentsCoursesRepository {
 
+  @Select("SELECT * FROM students_courses")
+  List<StudentsCourses> getAllStudentsCoursesList();
+
   @Select("SELECT * FROM students_courses WHERE course_id = #{courseId}")
   List<StudentsCourses> javaStudentsList(int courseId);
 

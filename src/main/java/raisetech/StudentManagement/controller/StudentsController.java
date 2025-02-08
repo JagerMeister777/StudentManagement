@@ -2,15 +2,15 @@ package raisetech.StudentManagement.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
-import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentsCoursesService;
 import raisetech.StudentManagement.service.StudentsService;
 
-@RestController
+@Controller
 public class StudentsController {
 
   /** 受講生情報のService */
@@ -45,11 +45,28 @@ public class StudentsController {
    */
   @GetMapping("/studentsCourses")
   public List<StudentsCoursesDTO> getStudentsCoursesList() {
-    return studentsCoursesService.getStudentsCoursesList();
+    return studentsCoursesService.getJavaStudentsCoursesList();
   }
 
-  @GetMapping("/studentList")
-  public List<StudentDetail> getStudentDetail() {
-    return studentConverter.studentConverter(studentsService.getStudentsList());
+  /**
+   * 受講生リストをテンプレートにレンダリング
+   * @param model 受講生リスト
+   * @return studentList.html
+   */
+  @GetMapping("/studentsList")
+  public String getStudentDetail(Model model) {
+    model.addAttribute("studentList",studentConverter.studentConverter(studentsService.getStudentsList()));
+    return "studentList";
+  }
+
+  /**
+   * 受講生コース情報リストをテンプレートにレンダリング
+   * @param model 受講生コース情報リスト
+   * @return studentsCoursesList.html
+   */
+  @GetMapping("/studentsCoursesList")
+  public String getStudentCoursesList(Model model) {
+    model.addAttribute("studentsCoursesDTO",studentsCoursesService.getAllStudentsCoursesList());
+    return "studentsCoursesList";
   }
 }
