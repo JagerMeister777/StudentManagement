@@ -107,6 +107,7 @@ public class StudentsController {
       if(studentsCoursesService.isExistingCombination(existedStudent.get().getId(),form.getCourseName())) {
         model.addAttribute("message","登録するコースを既に受講しています。");
         model.addAttribute("coursesList",coursesService.getCoursesList());
+        model.addAttribute("registerStudentForm", form);
         return "registerStudent";
       }else{
         studentsCoursesService.registerStudentsCourses(form);
