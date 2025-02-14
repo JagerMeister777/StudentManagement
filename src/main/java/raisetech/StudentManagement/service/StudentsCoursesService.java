@@ -98,11 +98,21 @@ public class StudentsCoursesService {
     return studentsCoursesDTOList;
   }
 
+  /**
+   * 受講生コース情報で受講生IDとコースIDの組み合わせが存在するか確認する
+   * @param studentId 受講生ID
+   * @param courseName コースID
+   * @return true or false
+   */
   public boolean isExistingCombination(int studentId, String courseName) {
     Optional<StudentsCourses> isExistingCombination = studentsCoursesRepository.isExistingCombination(studentId,coursesService.findByCourseName(courseName));
     return isExistingCombination.isPresent();
   }
 
+  /**
+   * 受講生コース情報の登録
+   * @param form 登録フォームの情報
+   */
   public void registerStudentsCourses(RegisterStudentForm form) {
     Optional<Student> student = studentsService.findByEmail(form.getEmail());
 

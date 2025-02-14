@@ -79,6 +79,11 @@ public class StudentsController {
     return "studentsCoursesList";
   }
 
+  /**
+   * 受講生登録画面の表示
+   * @param model 受講生登録フォームとコースリスト
+   * @return 受講生登録画面
+   */
   @GetMapping("/register/student")
   public String registerStudent(Model model) {
     RegisterStudentForm registerStudentForm = new RegisterStudentForm();
@@ -87,6 +92,13 @@ public class StudentsController {
     return "registerStudent";
   }
 
+  /**
+   * 受講生登録のPOST
+   * @param model エラーメッセージ、コースリスト
+   * @param form 受講生登録フォーム
+   * @param redirectAttributes Successメッセージ
+   * @return 受講生の新規登録 → 受講生一覧、受講生が登録済み → 受講生コース情報一覧
+   */
   @PostMapping("/register/student")
   public String registerStudent(Model model,@ModelAttribute RegisterStudentForm form,RedirectAttributes redirectAttributes) {
     Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());

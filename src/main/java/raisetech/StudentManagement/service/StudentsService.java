@@ -45,12 +45,20 @@ public class StudentsService {
     return student.getFullName();
   }
 
+  /**
+   * 受講生情報をメールアドレスで検索し、取得
+   * @param email メールアドレス
+   * @return 受講生情報、存在しなければEmptyを返す
+   */
   public Optional<Student> findByEmail(String email) {
     return repository.findByEmail(email);
   }
 
+  /**
+   * 受講生情報の登録
+   * @param form 登録フォームの情報
+   */
   public void registerStudent(RegisterStudentForm form) {
-    //TODO 受講生登録処理
     Student student = new Student();
     student.setFullName(form.getFullName());
     student.setFurigana(form.getFurigana());

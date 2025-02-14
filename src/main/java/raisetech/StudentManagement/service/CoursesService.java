@@ -39,6 +39,11 @@ public class CoursesService {
     return course.getName();
   }
 
+  /**
+   * コース名でコースIDを検索し、取得。
+   * @param courseName コース名
+   * @return コースID
+   */
   public int findByCourseName(String courseName) {
     return repository.findByCourseName(courseName);
   }
