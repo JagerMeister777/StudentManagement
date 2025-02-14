@@ -38,4 +38,8 @@ public class CoursesService {
     Course course = repository.findByCourseId(id);
     return course.getName();
   }
+
+  public int findByCourseName(String courseName) {
+    return repository.findByCourseName(courseName);
+  }
 }

@@ -2,12 +2,15 @@ package raisetech.StudentManagement.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.repository.StudentsRepository;
 
 @Service
@@ -40,5 +43,25 @@ public class StudentsService {
     // TODO 例外処理の実装
     Student student = repository.findByStudentId(id);
     return student.getFullName();
+  }
+
+  public Optional<Student> findByEmail(String email) {
+    return repository.findByEmail(email);
+  }
+
+  public void registerStudent(RegisterStudentForm form) {
+    //TODO 受講生登録処理
+    Student student = new Student();
+    student.setFullName(form.getFullName());
+    student.setFurigana(form.getFurigana());
+    student.setNickName(form.getNickName());
+    student.setEmail(form.getEmail());
+    student.setLivingArea(form.getLivingArea());
+    student.setAge(form.getAge());
+    student.setGender(form.getGender());
+    student.setRemark(form.getRemark());
+    student.setDeleted(false);
+
+    repository.save(student);
   }
 }

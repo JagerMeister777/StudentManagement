@@ -2,10 +2,13 @@ package raisetech.StudentManagement.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 
 /** 受講生コース情報のService */
@@ -93,5 +96,25 @@ public class StudentsCoursesService {
     }
 
     return studentsCoursesDTOList;
+  }
+
+  public boolean isExistingCombination(int studentId, String courseName) {
+    Optional<StudentsCourses> isExistingCombination = studentsCoursesRepository.isExistingCombination(studentId,coursesService.findByCourseName(courseName));
+    return isExistingCombination.isPresent();
+  }
+
+  public void registerStudentsCourses(RegisterStudentForm form) {
+    Optional<Student> student = studentsService.findByEmail(form.getEmail());
+
+    int studentId = student.get().getId();
+    int courseId = coursesService.findByCourseName(form.getCourseName());
+
+    StudentsCourses registerStudentsCourses = new StudentsCourses();
+    registerStudentsCourses.setStudentId(studentId);
+    registerStudentsCourses.setCourseId(courseId);
+    registerStudentsCourses.setCourseStartDate(form.getCourseStartDate());
+    registerStudentsCourses.setCourseEndDate(form.getCourseEndDate());
+
+    studentsCoursesRepository.save(registerStudentsCourses);
   }
 }
