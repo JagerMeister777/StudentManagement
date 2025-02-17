@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.form.RegisterStudentForm;
@@ -58,6 +59,7 @@ public class StudentsService {
    * 受講生情報の登録
    * @param form 登録フォームの情報
    */
+  @Transactional
   public void registerStudent(RegisterStudentForm form) {
     Student student = new Student();
     student.setFullName(form.getFullName());

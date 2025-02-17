@@ -101,24 +101,21 @@ public class StudentsController {
    */
   @PostMapping("/register/student")
   public String registerStudent(Model model,@ModelAttribute RegisterStudentForm form,RedirectAttributes redirectAttributes) {
-    Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());
+    String message = studentsCoursesService.registerHandling(form);
 
-    if(existedStudent.isPresent()) {
-      if(studentsCoursesService.isExistingCombination(existedStudent.get().getId(),form.getCourseName())) {
-        model.addAttribute("message","登録するコースを既に受講しています。");
-        model.addAttribute("coursesList",coursesService.getCoursesList());
-        model.addAttribute("registerStudentForm", form);
-        return "registerStudent";
-      }else{
-        studentsCoursesService.registerStudentsCourses(form);
-        redirectAttributes.addFlashAttribute("message",form.getFullName() + "：" + form.getCourseName() + "が登録されました。");
-        return "redirect:/studentsCoursesList";
-      }
+    if (message.equals("登録するコースを既に受講しています。")) {
+      model.addAttribute("message", message);
+      model.addAttribute("coursesList", coursesService.getCoursesList());
+      model.addAttribute("registerStudentForm", form);
+      return "registerStudent";
+    }
+
+    redirectAttributes.addFlashAttribute("message", message);
+
+    // コース情報のみの登録ならstudentsCoursesListへ、新規登録ならstudentsList へリダイレクト
+    if(studentsService.findByEmail(form.getEmail()).isPresent()) {
+      return "redirect:/studentsCoursesList";
     }else{
-      studentsService.registerStudent(form);
-      studentsCoursesService.registerStudentsCourses(form);
-
-      redirectAttributes.addFlashAttribute("message",form.getFullName() + "が登録されました。");
       return "redirect:/studentsList";
     }
   }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
@@ -113,6 +114,7 @@ public class StudentsCoursesService {
    * 受講生コース情報の登録
    * @param form 登録フォームの情報
    */
+  @Transactional
   public void registerStudentsCourses(RegisterStudentForm form) {
     Optional<Student> student = studentsService.findByEmail(form.getEmail());
 
@@ -126,5 +128,24 @@ public class StudentsCoursesService {
     registerStudentsCourses.setCourseEndDate(form.getCourseEndDate());
 
     studentsCoursesRepository.save(registerStudentsCourses);
+  }
+
+  public String registerHandling(RegisterStudentForm form) {
+    Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());
+
+    if (existedStudent.isPresent()) {
+      // 既に登録されている場合
+      if (isExistingCombination(existedStudent.get().getId(), form.getCourseName())) {
+        return "登録するコースを既に受講しています。";
+      } else {
+        registerStudentsCourses(form);
+        return form.getFullName() + "：" + form.getCourseName() + "が登録されました。";
+      }
+    } else {
+      // 新規登録の場合
+      studentsService.registerStudent(form);
+      registerStudentsCourses(form);
+      return form.getFullName() + "が登録されました。";
+    }
   }
 }
