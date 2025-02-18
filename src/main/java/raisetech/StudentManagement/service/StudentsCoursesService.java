@@ -131,6 +131,11 @@ public class StudentsCoursesService {
     studentsCoursesRepository.save(registerStudentsCourses);
   }
 
+  /**
+   * 受講生情報の登録処理
+   * @param form 受講生登録フォームに入力された情報
+   * @return 処理後の遷移先画面
+   */
   public String registerHandling(RegisterStudentForm form) {
     Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());
 
