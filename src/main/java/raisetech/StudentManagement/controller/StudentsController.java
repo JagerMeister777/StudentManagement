@@ -113,7 +113,7 @@ public class StudentsController {
     redirectAttributes.addFlashAttribute("message", message);
 
     // コース情報のみの登録ならstudentsCoursesListへ、新規登録ならstudentsList へリダイレクト
-    if(studentsService.findByEmail(form.getEmail()).isPresent()) {
+    if(message.contains("コース情報が登録されました。")) {
       return "redirect:/studentsCoursesList";
     }else{
       return "redirect:/studentsList";

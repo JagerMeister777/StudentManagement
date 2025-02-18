@@ -1,10 +1,12 @@
 package raisetech.StudentManagement.service;
 
+import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,16 +63,17 @@ public class StudentsService {
    */
   @Transactional
   public void registerStudent(RegisterStudentForm form) {
-    Student student = new Student();
-    student.setFullName(form.getFullName());
-    student.setFurigana(form.getFurigana());
-    student.setNickName(form.getNickName());
-    student.setEmail(form.getEmail());
-    student.setLivingArea(form.getLivingArea());
-    student.setAge(form.getAge());
-    student.setGender(form.getGender());
-    student.setRemark(form.getRemark());
-    student.setDeleted(false);
+    Student student = new Student(
+        form.getFullName(),
+        form.getFurigana(),
+        form.getNickName(),
+        form.getEmail(),
+        form.getLivingArea(),
+        form.getAge(),
+        form.getGender(),
+        form.getRemark(),
+        false
+    );
 
     repository.save(student);
   }

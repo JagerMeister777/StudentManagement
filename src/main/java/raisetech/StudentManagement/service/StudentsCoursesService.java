@@ -121,11 +121,12 @@ public class StudentsCoursesService {
     int studentId = student.get().getId();
     int courseId = coursesService.findByCourseName(form.getCourseName());
 
-    StudentsCourses registerStudentsCourses = new StudentsCourses();
-    registerStudentsCourses.setStudentId(studentId);
-    registerStudentsCourses.setCourseId(courseId);
-    registerStudentsCourses.setCourseStartDate(form.getCourseStartDate());
-    registerStudentsCourses.setCourseEndDate(form.getCourseEndDate());
+    StudentsCourses registerStudentsCourses = new StudentsCourses(
+        studentId,
+        courseId,
+        form.getCourseStartDate(),
+        form.getCourseEndDate()
+    );
 
     studentsCoursesRepository.save(registerStudentsCourses);
   }
@@ -139,13 +140,13 @@ public class StudentsCoursesService {
         return "登録するコースを既に受講しています。";
       } else {
         registerStudentsCourses(form);
-        return form.getFullName() + "：" + form.getCourseName() + "が登録されました。";
+        return "コース情報が登録されました。  " + form.getFullName() + "：" + form.getCourseName();
       }
     } else {
       // 新規登録の場合
       studentsService.registerStudent(form);
       registerStudentsCourses(form);
-      return form.getFullName() + "が登録されました。";
+      return  "受講生情報が登録されました。  " + form.getFullName();
     }
   }
 }
