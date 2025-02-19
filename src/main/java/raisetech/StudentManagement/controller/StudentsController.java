@@ -11,8 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
-import raisetech.StudentManagement.exceptions.RegisterStudentException;
-import raisetech.StudentManagement.exceptions.RegisterStudentsCoursesException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.service.CoursesService;
 import raisetech.StudentManagement.service.StudentsCoursesService;
@@ -102,25 +100,22 @@ public class StudentsController {
    */
   @PostMapping("/register/student")
   public String registerStudent(Model model,@ModelAttribute RegisterStudentForm form,RedirectAttributes redirectAttributes) {
-    String destinationPage = "";
     try {
-      studentsCoursesService.registerHandling(form);
+      String message = studentsCoursesService.registerHandling(form);
+
+      if(message.contains("コース情報が登録されました。")) {
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/studentsCoursesList";
+      }else{
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/studentsList";
+      }
 
     } catch (ExistedStudentsCoursesException e) {
       model.addAttribute("message", e.getMessage());
       model.addAttribute("coursesList", coursesService.getCoursesList());
       model.addAttribute("registerStudentForm", form);
-      destinationPage = "registerStudent";
-
-    } catch (RegisterStudentsCoursesException e) {
-      redirectAttributes.addFlashAttribute("message", e.getMessage());
-      destinationPage = "redirect:/studentsCoursesList";
-
-    } catch (RegisterStudentException e) {
-      redirectAttributes.addFlashAttribute("message", e.getMessage());
-      destinationPage = "redirect:/studentsList";
-
+      return "registerStudent";
     }
-    return destinationPage;
   }
 }
