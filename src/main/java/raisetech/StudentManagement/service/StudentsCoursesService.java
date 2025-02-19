@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
+import raisetech.StudentManagement.exceptions.RegisterStudentsCoursesException;
+import raisetech.StudentManagement.exceptions.RegisterStudentException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 
@@ -134,24 +137,23 @@ public class StudentsCoursesService {
   /**
    * 受講生情報の登録処理
    * @param form 受講生登録フォームに入力された情報
-   * @return 処理後の遷移先画面
    */
-  public String registerHandling(RegisterStudentForm form) {
+  public void registerHandling(RegisterStudentForm form) {
     Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());
-
     if (existedStudent.isPresent()) {
       // 既に登録されている場合
       if (isExistingCombination(existedStudent.get().getId(), form.getCourseName())) {
-        return "登録するコースを既に受講しています。";
+        throw new ExistedStudentsCoursesException("登録するコースを既に受講しています。");
       } else {
+        // コース情報のみ登録
         registerStudentsCourses(form);
-        return "コース情報が登録されました。  " + form.getFullName() + "：" + form.getCourseName();
+        throw new RegisterStudentsCoursesException("コース情報が登録されました。  " + form.getFullName() + "：" + form.getCourseName());
       }
     } else {
       // 新規登録の場合
       studentsService.registerStudent(form);
       registerStudentsCourses(form);
-      return  "受講生情報が登録されました。  " + form.getFullName();
+      throw new RegisterStudentException("受講生情報が登録されました。  " + form.getFullName());
     }
   }
 }

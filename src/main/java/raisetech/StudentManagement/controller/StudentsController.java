@@ -1,17 +1,18 @@
 package raisetech.StudentManagement.controller;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
+import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
+import raisetech.StudentManagement.exceptions.RegisterStudentException;
+import raisetech.StudentManagement.exceptions.RegisterStudentsCoursesException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.service.CoursesService;
 import raisetech.StudentManagement.service.StudentsCoursesService;
@@ -101,22 +102,25 @@ public class StudentsController {
    */
   @PostMapping("/register/student")
   public String registerStudent(Model model,@ModelAttribute RegisterStudentForm form,RedirectAttributes redirectAttributes) {
-    String message = studentsCoursesService.registerHandling(form);
+    String destinationPage = "";
+    try {
+      studentsCoursesService.registerHandling(form);
 
-    if (message.equals("登録するコースを既に受講しています。")) {
-      model.addAttribute("message", message);
+    } catch (ExistedStudentsCoursesException e) {
+      model.addAttribute("message", e.getMessage());
       model.addAttribute("coursesList", coursesService.getCoursesList());
       model.addAttribute("registerStudentForm", form);
-      return "registerStudent";
-    }
+      destinationPage = "registerStudent";
 
-    redirectAttributes.addFlashAttribute("message", message);
+    } catch (RegisterStudentsCoursesException e) {
+      redirectAttributes.addFlashAttribute("message", e.getMessage());
+      destinationPage = "redirect:/studentsCoursesList";
 
-    // コース情報のみの登録ならstudentsCoursesListへ、新規登録ならstudentsList へリダイレクト
-    if(message.contains("コース情報が登録されました。")) {
-      return "redirect:/studentsCoursesList";
-    }else{
-      return "redirect:/studentsList";
+    } catch (RegisterStudentException e) {
+      redirectAttributes.addFlashAttribute("message", e.getMessage());
+      destinationPage = "redirect:/studentsList";
+
     }
+    return destinationPage;
   }
 }
