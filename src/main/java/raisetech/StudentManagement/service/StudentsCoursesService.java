@@ -135,6 +135,7 @@ public class StudentsCoursesService {
   /**
    * 受講生情報の登録処理
    * @param form 受講生登録フォームに入力された情報
+   * @return メッセージ
    */
   public String registerHandling(RegisterStudentForm form) {
     Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());
