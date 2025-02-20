@@ -2,10 +2,15 @@ package raisetech.StudentManagement.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
+import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 
 /** 受講生コース情報のService */
@@ -93,5 +98,61 @@ public class StudentsCoursesService {
     }
 
     return studentsCoursesDTOList;
+  }
+
+  /**
+   * 受講生コース情報で受講生IDとコースIDの組み合わせが存在するか確認する
+   * @param studentId 受講生ID
+   * @param courseName コースID
+   * @return true or false
+   */
+  public boolean isExistingCombination(int studentId, String courseName) {
+    Optional<StudentsCourses> isExistingCombination = studentsCoursesRepository.isExistingCombination(studentId,coursesService.findByCourseName(courseName));
+    return isExistingCombination.isPresent();
+  }
+
+  /**
+   * 受講生コース情報の登録
+   * @param form 登録フォームの情報
+   */
+  @Transactional
+  public void registerStudentsCourses(RegisterStudentForm form) {
+    Optional<Student> student = studentsService.findByEmail(form.getEmail());
+
+    int studentId = student.get().getId();
+    int courseId = coursesService.findByCourseName(form.getCourseName());
+
+    StudentsCourses registerStudentsCourses = new StudentsCourses(
+        studentId,
+        courseId,
+        form.getCourseStartDate(),
+        form.getCourseEndDate()
+    );
+
+    studentsCoursesRepository.save(registerStudentsCourses);
+  }
+
+  /**
+   * 受講生情報の登録処理
+   * @param form 受講生登録フォームに入力された情報
+   * @return メッセージ
+   */
+  public String registerHandling(RegisterStudentForm form) {
+    Optional<Student> existedStudent = studentsService.findByEmail(form.getEmail());
+    if (existedStudent.isPresent()) {
+      // 既に登録されている場合
+      if (isExistingCombination(existedStudent.get().getId(), form.getCourseName())) {
+        throw new ExistedStudentsCoursesException("登録するコースを既に受講しています。");
+      } else {
+        // コース情報のみ登録
+        registerStudentsCourses(form);
+        return "コース情報が登録されました。  " + form.getFullName() + "：" + form.getCourseName();
+      }
+    } else {
+      // 新規登録の場合
+      studentsService.registerStudent(form);
+      registerStudentsCourses(form);
+      return "受講生情報が登録されました。  " + form.getFullName();
+    }
   }
 }

@@ -1,13 +1,19 @@
 package raisetech.StudentManagement.service;
 
+import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.repository.StudentsRepository;
 
 @Service
@@ -40,5 +46,35 @@ public class StudentsService {
     // TODO 例外処理の実装
     Student student = repository.findByStudentId(id);
     return student.getFullName();
+  }
+
+  /**
+   * 受講生情報をメールアドレスで検索し、取得
+   * @param email メールアドレス
+   * @return 受講生情報、存在しなければEmptyを返す
+   */
+  public Optional<Student> findByEmail(String email) {
+    return repository.findByEmail(email);
+  }
+
+  /**
+   * 受講生情報の登録
+   * @param form 登録フォームの情報
+   */
+  @Transactional
+  public void registerStudent(RegisterStudentForm form) {
+    Student student = new Student(
+        form.getFullName(),
+        form.getFurigana(),
+        form.getNickName(),
+        form.getEmail(),
+        form.getLivingArea(),
+        form.getAge(),
+        form.getGender(),
+        form.getRemark(),
+        false
+    );
+
+    repository.save(student);
   }
 }

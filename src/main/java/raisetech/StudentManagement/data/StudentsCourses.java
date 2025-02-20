@@ -19,4 +19,23 @@ public class StudentsCourses {
   private LocalDateTime courseStartDate;
   private LocalDateTime courseEndDate;
 
+  // 新規登録用コンストラクタ
+  public StudentsCourses(int studentId, int courseId, LocalDateTime courseStartDate,
+      LocalDateTime courseEndDate) {
+    this.studentId = studentId;
+    this.courseId = courseId;
+    this.courseStartDate = courseStartDate;
+    this.courseEndDate = courseEndDate;
+  }
+
+  // データ取得用コンストラクタ
+  public StudentsCourses(int id, int studentId, int courseId, LocalDateTime courseStartDate,
+      LocalDateTime courseEndDate) {
+    this.id = id;
+    this.studentId = studentId;
+    this.courseId = courseId;
+    this.courseStartDate = courseStartDate;
+    this.courseEndDate = courseEndDate;
+  }
+
 }
