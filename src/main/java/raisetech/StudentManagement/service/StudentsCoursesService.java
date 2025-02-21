@@ -1,16 +1,21 @@
 package raisetech.StudentManagement.service;
 
+import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
+import raisetech.StudentManagement.form.UpdateStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 
 /** 受講生コース情報のService */
@@ -55,7 +60,7 @@ public class StudentsCoursesService {
     for(StudentsCourses studentsCourses: allStudentsCoursesList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
 
-      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()));
+      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
       studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
@@ -89,7 +94,7 @@ public class StudentsCoursesService {
     for(StudentsCourses studentsCourses: javaStudentsList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
 
-      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()));
+      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
       studentsCoursesDTO.setCourseName(coursesService.findByCourseId(JAVA_COURSE_ID));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
@@ -154,5 +159,64 @@ public class StudentsCoursesService {
       registerStudentsCourses(form);
       return "受講生情報が登録されました。  " + form.getFullName();
     }
+  }
+
+  @Transactional
+  public void updateStudentCourses(StudentsCourses existStudentCourses, UpdateStudentForm form, int studentId, int courseId) {
+
+    existStudentCourses.setStudentId(studentId);
+    existStudentCourses.setCourseId(courseId);
+    existStudentCourses.setCourseStartDate(form.getCourseStartDate());
+    existStudentCourses.setCourseEndDate(form.getCourseEndDate());
+
+    studentsCoursesRepository.updateStudentsCourses(existStudentCourses);
+
+  }
+
+  public Map<String, String> generateChangeFieldMap(StudentsCourses existStudentCourses, UpdateStudentForm form, int studentId, int courseId) {
+    Map<String, String> changeFieldMap = new HashMap<>();
+    Map<String, Object> existStudentCoursesFieldMap = new HashMap<>();
+    Map<String, Object> updateStudentCoursesFieldMap = new HashMap<>();
+
+    // Studentのフィールド値をMapに格納
+    existStudentCoursesFieldMap.put("受講生ID", existStudentCourses.getStudentId());
+    existStudentCoursesFieldMap.put("コースID", existStudentCourses.getCourseId());
+    existStudentCoursesFieldMap.put("受講開始日", existStudentCourses.getCourseStartDate());
+    existStudentCoursesFieldMap.put("受講終了日", existStudentCourses.getCourseEndDate());
+
+    // フォームの入力値をMapに格納
+    updateStudentCoursesFieldMap.put("受講生ID", studentId);
+    updateStudentCoursesFieldMap.put("コースID", courseId);
+    updateStudentCoursesFieldMap.put("受講開始日", form.getCourseStartDate());
+    updateStudentCoursesFieldMap.put("受講終了日", form.getCourseEndDate());
+
+    // フィールドごとに比較して変更されていればリストに追加
+    for (String key : existStudentCoursesFieldMap.keySet()) {
+      if (!existStudentCoursesFieldMap.get(key).equals(updateStudentCoursesFieldMap.get(key))) {
+        changeFieldMap.put(key,updateStudentCoursesFieldMap.get(key).toString());
+      }
+    }
+
+    return changeFieldMap;
+  }
+
+  public String updateStudentsCoursesHandling(@Valid UpdateStudentForm form, int id, BindingResult result) {
+    if(result.hasErrors()) {
+      return "エラー: " + result.getAllErrors();
+    }
+
+    int studentId = studentsService.findByEmail(form.getEmail()).get().getId();
+    int courseId = coursesService.findByCourseName(form.getCourseName());
+
+    StudentsCourses existStudentCourses = studentsCoursesRepository.getOneStudentsCourses(studentId,courseId);
+
+    Map<String,String> changeFieldMap = generateChangeFieldMap(existStudentCourses,form,studentId,courseId);
+
+    if(!changeFieldMap.isEmpty()) {
+      updateStudentCourses(existStudentCourses,form,studentId,courseId);
+      return changeFieldMap.toString();
+    }
+
+    return "変更がありませんでした。";
   }
 }

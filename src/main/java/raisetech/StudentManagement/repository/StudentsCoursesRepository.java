@@ -43,6 +43,9 @@ public interface StudentsCoursesRepository {
   @Select("SELECT * FROM students_courses WHERE student_id = #{studentId} AND course_id = #{courseId}")
   Optional<StudentsCourses> isExistingCombination(int studentId, int courseId);
 
+  @Select("SELECT * FROM students_courses WHERE student_id = #{studentId} AND course_id = #{courseId}")
+  StudentsCourses getOneStudentsCourses(int studentId, int courseId);
+
   /**
    * 受講生コース情報の登録
    * @param studentsCourses 受講生コース情報
