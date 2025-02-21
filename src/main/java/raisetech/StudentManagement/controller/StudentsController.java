@@ -1,17 +1,23 @@
 package raisetech.StudentManagement.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
+import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
+import raisetech.StudentManagement.exceptions.UpdateFieldBindingException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
+import raisetech.StudentManagement.form.UpdateStudentForm;
 import raisetech.StudentManagement.service.CoursesService;
 import raisetech.StudentManagement.service.StudentsCoursesService;
 import raisetech.StudentManagement.service.StudentsService;
@@ -118,4 +124,45 @@ public class StudentsController {
       return "registerStudent";
     }
   }
+
+  @GetMapping("/update/student/{id}")
+  public String updateStudentView(@PathVariable("id") int id, Model model) {
+    UpdateStudentForm updateStudentForm = new UpdateStudentForm();
+    StudentDetail studentDetail = new StudentDetail(
+        studentsService.findByStudentId(id),
+        studentsCoursesService.getStudentsCoursesList(id)
+    );
+
+    model.addAttribute("studentDetail", studentDetail);
+    model.addAttribute("updateStudentForm", updateStudentForm);
+    return "studentDetail";
+  }
+
+  @PostMapping("/update/student/{id}")
+  public String updateStudent(
+      @PathVariable("id") int id,
+      @Valid @ModelAttribute("updateStudentForm") UpdateStudentForm form,
+      Model model,
+      RedirectAttributes redirectAttributes,
+      BindingResult result) {
+    try {
+      String message = studentsCoursesService.updateHandling(form, id, result);
+
+      redirectAttributes.addFlashAttribute("message", message);
+      return "redirect:/update/student/{" + id + "}";
+
+    } catch (UpdateFieldBindingException e) {
+
+      StudentDetail studentDetail = new StudentDetail(
+          studentsService.findByStudentId(id),
+          studentsCoursesService.getStudentsCoursesList(id)
+      );
+
+      model.addAttribute("studentDetail", studentDetail);
+      model.addAttribute("updateStudentForm", form);
+      model.addAttribute("message", e.getMessage());
+      return "studentDetail";
+    }
+  }
+
 }

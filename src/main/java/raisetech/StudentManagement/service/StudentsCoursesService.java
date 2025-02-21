@@ -2,9 +2,7 @@ package raisetech.StudentManagement.service;
 
 import jakarta.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,21 +12,30 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
+import raisetech.StudentManagement.exceptions.UpdateFieldBindingException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.form.UpdateStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 
-/** 受講生コース情報のService */
+/**
+ * 受講生コース情報のService
+ */
 @Service
 public class StudentsCoursesService {
 
-  /** 受講生情報のService */
+  /**
+   * 受講生情報のService
+   */
   private StudentsService studentsService;
 
-  /** コース情報のService */
+  /**
+   * コース情報のService
+   */
   private CoursesService coursesService;
 
-  /** 受講生コース情報のRepository */
+  /**
+   * 受講生コース情報のRepository
+   */
   private StudentsCoursesRepository studentsCoursesRepository;
 
   @Autowired
@@ -41,6 +48,7 @@ public class StudentsCoursesService {
 
   /**
    * 特定の受講生コース情報を取得する
+   *
    * @param studentId 受講生ID
    * @return リスト型の受講生コース情報（複数件の可能性を考慮）
    */
@@ -50,6 +58,7 @@ public class StudentsCoursesService {
 
   /**
    * 受講生コース情報の全件を取得し、DTOへ変換してリストで返す
+   *
    * @return 全件StudentCoursesDTO
    */
   public List<StudentsCoursesDTO> getAllStudentsCoursesList() {
@@ -57,11 +66,13 @@ public class StudentsCoursesService {
 
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
 
-    for(StudentsCourses studentsCourses: allStudentsCoursesList) {
+    for (StudentsCourses studentsCourses : allStudentsCoursesList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
 
-      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
-      studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
+      studentsCoursesDTO.setStudentName(
+          studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
+      studentsCoursesDTO.setCourseName(
+          coursesService.findByCourseId(studentsCourses.getCourseId()));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
 
@@ -73,6 +84,7 @@ public class StudentsCoursesService {
 
   /**
    * 受講生の条件検索（Javaフルコースの学生を検索）
+   *
    * @return Javaフルコースの受講生リスト
    */
   public List<StudentsCoursesDTO> getJavaStudentsCoursesList() {
@@ -85,16 +97,18 @@ public class StudentsCoursesService {
 
     // TODO 例外処理の実装
     // 対象のコースを受講している受講生情報の全件取得
-    List<StudentsCourses> javaStudentsList = studentsCoursesRepository.javaStudentsList(JAVA_COURSE_ID);
+    List<StudentsCourses> javaStudentsList = studentsCoursesRepository.javaStudentsList(
+        JAVA_COURSE_ID);
 
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
 
     // TODO 例外処理の実装
     // DTOクラスで出力
-    for(StudentsCourses studentsCourses: javaStudentsList) {
+    for (StudentsCourses studentsCourses : javaStudentsList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
 
-      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
+      studentsCoursesDTO.setStudentName(
+          studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
       studentsCoursesDTO.setCourseName(coursesService.findByCourseId(JAVA_COURSE_ID));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
@@ -107,17 +121,20 @@ public class StudentsCoursesService {
 
   /**
    * 受講生コース情報で受講生IDとコースIDの組み合わせが存在するか確認する
-   * @param studentId 受講生ID
+   *
+   * @param studentId  受講生ID
    * @param courseName コースID
    * @return true or false
    */
   public boolean isExistingCombination(int studentId, String courseName) {
-    Optional<StudentsCourses> isExistingCombination = studentsCoursesRepository.isExistingCombination(studentId,coursesService.findByCourseName(courseName));
+    Optional<StudentsCourses> isExistingCombination = studentsCoursesRepository.isExistingCombination(
+        studentId, coursesService.findByCourseName(courseName));
     return isExistingCombination.isPresent();
   }
 
   /**
    * 受講生コース情報の登録
+   *
    * @param form 登録フォームの情報
    */
   @Transactional
@@ -139,6 +156,7 @@ public class StudentsCoursesService {
 
   /**
    * 受講生情報の登録処理
+   *
    * @param form 受講生登録フォームに入力された情報
    * @return メッセージ
    */
@@ -162,61 +180,32 @@ public class StudentsCoursesService {
   }
 
   @Transactional
-  public void updateStudentCourses(StudentsCourses existStudentCourses, UpdateStudentForm form, int studentId, int courseId) {
+  public void updateStudentCourses(List<StudentsCourses> existStudentCoursesList, List<StudentsCourses> updateStudentsCoursesList) {
 
-    existStudentCourses.setStudentId(studentId);
-    existStudentCourses.setCourseId(courseId);
-    existStudentCourses.setCourseStartDate(form.getCourseStartDate());
-    existStudentCourses.setCourseEndDate(form.getCourseEndDate());
+    existStudentCoursesList.forEach(existStudentCourses -> {
+      updateStudentsCoursesList.forEach(updateStudentsCourses -> {
+        if(existStudentCourses.getId() == updateStudentsCourses.getId()) {
+          existStudentCourses.setCourseStartDate(updateStudentsCourses.getCourseStartDate());
+          existStudentCourses.setCourseEndDate(updateStudentsCourses.getCourseEndDate());
+        }
+      });
 
-    studentsCoursesRepository.updateStudentsCourses(existStudentCourses);
-
+      studentsCoursesRepository.updateStudentsCourses(existStudentCourses);
+    });
   }
 
-  public Map<String, String> generateChangeFieldMap(StudentsCourses existStudentCourses, UpdateStudentForm form, int studentId, int courseId) {
-    Map<String, String> changeFieldMap = new HashMap<>();
-    Map<String, Object> existStudentCoursesFieldMap = new HashMap<>();
-    Map<String, Object> updateStudentCoursesFieldMap = new HashMap<>();
-
-    // Studentのフィールド値をMapに格納
-    existStudentCoursesFieldMap.put("受講生ID", existStudentCourses.getStudentId());
-    existStudentCoursesFieldMap.put("コースID", existStudentCourses.getCourseId());
-    existStudentCoursesFieldMap.put("受講開始日", existStudentCourses.getCourseStartDate());
-    existStudentCoursesFieldMap.put("受講終了日", existStudentCourses.getCourseEndDate());
-
-    // フォームの入力値をMapに格納
-    updateStudentCoursesFieldMap.put("受講生ID", studentId);
-    updateStudentCoursesFieldMap.put("コースID", courseId);
-    updateStudentCoursesFieldMap.put("受講開始日", form.getCourseStartDate());
-    updateStudentCoursesFieldMap.put("受講終了日", form.getCourseEndDate());
-
-    // フィールドごとに比較して変更されていればリストに追加
-    for (String key : existStudentCoursesFieldMap.keySet()) {
-      if (!existStudentCoursesFieldMap.get(key).equals(updateStudentCoursesFieldMap.get(key))) {
-        changeFieldMap.put(key,updateStudentCoursesFieldMap.get(key).toString());
-      }
+  public String updateHandling(@Valid UpdateStudentForm form, int studentId,
+      BindingResult result) {
+    if (result.hasErrors()) {
+      throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());
     }
 
-    return changeFieldMap;
-  }
+    Student existStudent = studentsService.findByStudentId(studentId);
+    List<StudentsCourses> existStudentCourses = getStudentsCoursesList(studentId);
 
-  public String updateStudentsCoursesHandling(@Valid UpdateStudentForm form, int id, BindingResult result) {
-    if(result.hasErrors()) {
-      return "エラー: " + result.getAllErrors();
-    }
+    studentsService.updateStudent(existStudent, form);
+    updateStudentCourses(existStudentCourses, form.getStudentsCoursesList());
 
-    int studentId = studentsService.findByEmail(form.getEmail()).get().getId();
-    int courseId = coursesService.findByCourseName(form.getCourseName());
-
-    StudentsCourses existStudentCourses = studentsCoursesRepository.getOneStudentsCourses(studentId,courseId);
-
-    Map<String,String> changeFieldMap = generateChangeFieldMap(existStudentCourses,form,studentId,courseId);
-
-    if(!changeFieldMap.isEmpty()) {
-      updateStudentCourses(existStudentCourses,form,studentId,courseId);
-      return changeFieldMap.toString();
-    }
-
-    return "変更がありませんでした。";
+    return "更新が完了しました。";
   }
 }
