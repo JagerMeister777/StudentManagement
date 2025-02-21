@@ -129,7 +129,7 @@ public class StudentsCoursesService {
         form.getCourseEndDate()
     );
 
-    studentsCoursesRepository.save(registerStudentsCourses);
+    studentsCoursesRepository.registerStudentsCourses(registerStudentsCourses);
   }
 
   /**

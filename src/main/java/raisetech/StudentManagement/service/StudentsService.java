@@ -1,18 +1,11 @@
 package raisetech.StudentManagement.service;
 
-import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.repository.StudentsRepository;
 
@@ -75,6 +68,6 @@ public class StudentsService {
         false
     );
 
-    repository.save(student);
+    repository.registerStudent(student);
   }
 }
