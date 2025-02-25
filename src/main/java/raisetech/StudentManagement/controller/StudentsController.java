@@ -162,10 +162,12 @@ public class StudentsController {
   @PostMapping("/update/student/{id}")
   public String updateStudent(
       @PathVariable("id") int id,
-      @ModelAttribute("updateStudentForm") UpdateStudentForm form, Model model,
+      @ModelAttribute("updateStudentForm") UpdateStudentForm form,
+      BindingResult result,
+      Model model,
       RedirectAttributes redirectAttributes) {
     try {
-      String message = studentsCoursesService.updateHandling(form);
+      String message = studentsCoursesService.updateHandling(form, result);
 
       redirectAttributes.addFlashAttribute("message", message);
       return "redirect:/student/" + id;

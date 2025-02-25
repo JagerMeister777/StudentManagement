@@ -213,10 +213,10 @@ public class StudentsCoursesService {
     });
   }
 
-  public String updateHandling(@Valid UpdateStudentForm form) {
-//    if (result.hasErrors()) {
-//      throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());
-//    }
+  public String updateHandling(@Valid UpdateStudentForm form,BindingResult result) {
+    if (result.hasErrors()) {
+      throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());
+    }
 
     Student existStudent = studentsService.findByStudentId(form.getId());
     List<StudentsCourses> existStudentCourses = getStudentsCoursesList(form.getId());
