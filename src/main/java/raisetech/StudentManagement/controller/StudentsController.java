@@ -1,6 +1,7 @@
 package raisetech.StudentManagement.controller;
 
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
+import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
@@ -125,44 +127,53 @@ public class StudentsController {
     }
   }
 
+  @GetMapping("/student/{id}")
+  public String studentDetailView(@PathVariable("id") int id, Model model) {
+
+    Student student = studentsService.findByStudentId(id);
+    List<StudentsCoursesDTO> studentsCoursesDTO = studentsCoursesService.getStudentsCoursesDTO(id);
+    model.addAttribute("student", student);
+    model.addAttribute("studentsCoursesDTO", studentsCoursesDTO);
+    return "studentDetail";
+  }
+
   @GetMapping("/update/student/{id}")
   public String updateStudentView(@PathVariable("id") int id, Model model) {
-    UpdateStudentForm updateStudentForm = new UpdateStudentForm();
-    StudentDetail studentDetail = new StudentDetail(
-        studentsService.findByStudentId(id),
-        studentsCoursesService.getStudentsCoursesList(id)
-    );
+    Student student = studentsService.findByStudentId(id);
+    List<StudentsCoursesDTO> studentsCoursesList = studentsCoursesService.getStudentsCoursesDTO(id);
 
-    model.addAttribute("studentDetail", studentDetail);
+    UpdateStudentForm updateStudentForm = new UpdateStudentForm(
+        id,
+        student.getFullName(),
+        student.getFurigana(),
+        student.getNickName(),
+        student.getEmail(),
+        student.getLivingArea(),
+        student.getAge(),
+        student.getGender(),
+        student.getRemark(),
+        false,
+        studentsCoursesList);
+
     model.addAttribute("updateStudentForm", updateStudentForm);
-    return "studentDetail";
+    return "updateStudent";
   }
 
   @PostMapping("/update/student/{id}")
   public String updateStudent(
       @PathVariable("id") int id,
-      @Valid @ModelAttribute("updateStudentForm") UpdateStudentForm form,
-      Model model,
-      RedirectAttributes redirectAttributes,
-      BindingResult result) {
+      @ModelAttribute("updateStudentForm") UpdateStudentForm form, Model model,
+      RedirectAttributes redirectAttributes) {
     try {
-      String message = studentsCoursesService.updateHandling(form, id, result);
+      String message = studentsCoursesService.updateHandling(form);
 
       redirectAttributes.addFlashAttribute("message", message);
-      return "redirect:/update/student/{" + id + "}";
+      return "redirect:/student/" + id;
 
     } catch (UpdateFieldBindingException e) {
-
-      StudentDetail studentDetail = new StudentDetail(
-          studentsService.findByStudentId(id),
-          studentsCoursesService.getStudentsCoursesList(id)
-      );
-
-      model.addAttribute("studentDetail", studentDetail);
       model.addAttribute("updateStudentForm", form);
       model.addAttribute("message", e.getMessage());
       return "studentDetail";
     }
   }
-
 }

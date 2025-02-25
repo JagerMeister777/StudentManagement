@@ -53,6 +53,6 @@ public interface StudentsCoursesRepository {
   @Select("INSERT INTO students_courses (student_id, course_id, course_start_date, course_end_date) VALUES (#{studentId}, #{courseId}, #{courseStartDate}, #{courseEndDate});")
   void registerStudentsCourses(StudentsCourses studentsCourses);
 
-  @Update("UPDATE students_courses SET student_id = #{studentId}, course_id = #{courseId}, course_start_date = ##{courseStartDate}, course_end_date = #{courseEndDate} WHERE id = #{id}")
+  @Update("UPDATE students_courses SET id = #{id}, student_id = #{studentId}, course_id = #{courseId}, course_start_date = #{courseStartDate}, course_end_date = #{courseEndDate} WHERE id = #{id}")
   void updateStudentsCourses(StudentsCourses studentsCourses);
 }

@@ -6,10 +6,13 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentsCoursesDTO;
 
 @Getter
 @Setter
 public class UpdateStudentForm {
+
+  private int id;
 
   @NotBlank(message = "名前を入力してください。")
   private String fullName;
@@ -35,5 +38,25 @@ public class UpdateStudentForm {
   private String remark;
   private boolean isDeleted;
 
-  List<StudentsCourses> studentsCoursesList;
+  List<StudentsCoursesDTO> studentsCoursesList;
+
+  public UpdateStudentForm(int id, String fullName, String furigana, String nickName, String email,
+      String livingArea, int age, String gender, String remark, boolean isDeleted,
+      List<StudentsCoursesDTO> studentsCoursesList) {
+    this.id = id;
+    this.fullName = fullName;
+    this.furigana = furigana;
+    this.nickName = nickName;
+    this.email = email;
+    this.livingArea = livingArea;
+    this.age = age;
+    this.gender = gender;
+    this.remark = remark;
+    this.isDeleted = isDeleted;
+    this.studentsCoursesList = studentsCoursesList;
+  }
+
+  public boolean getIsDeleted() {  // 明示的に getter を定義
+    return isDeleted;
+  }
 }

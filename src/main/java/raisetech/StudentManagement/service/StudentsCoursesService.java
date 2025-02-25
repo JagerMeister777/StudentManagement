@@ -1,6 +1,7 @@
 package raisetech.StudentManagement.service;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -95,14 +96,12 @@ public class StudentsCoursesService {
     // TODO 動的にコース名で検索できるようにする
     final int JAVA_COURSE_ID = 1;
 
-    // TODO 例外処理の実装
     // 対象のコースを受講している受講生情報の全件取得
     List<StudentsCourses> javaStudentsList = studentsCoursesRepository.javaStudentsList(
         JAVA_COURSE_ID);
 
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
 
-    // TODO 例外処理の実装
     // DTOクラスで出力
     for (StudentsCourses studentsCourses : javaStudentsList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
@@ -110,6 +109,25 @@ public class StudentsCoursesService {
       studentsCoursesDTO.setStudentName(
           studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
       studentsCoursesDTO.setCourseName(coursesService.findByCourseId(JAVA_COURSE_ID));
+      studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
+      studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
+
+      studentsCoursesDTOList.add(studentsCoursesDTO);
+    }
+
+    return studentsCoursesDTOList;
+  }
+
+  public List<StudentsCoursesDTO> getStudentsCoursesDTO(int studentId) {
+    List<StudentsCourses> studentsCoursesList = getStudentsCoursesList(studentId);
+    List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
+
+    // DTOクラスで出力
+    for (StudentsCourses studentsCourses : studentsCoursesList) {
+      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
+
+      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentId).getFullName());
+      studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
 
@@ -180,30 +198,31 @@ public class StudentsCoursesService {
   }
 
   @Transactional
-  public void updateStudentCourses(List<StudentsCourses> existStudentCoursesList, List<StudentsCourses> updateStudentsCoursesList) {
+  public void updateStudentCourses(List<StudentsCourses> existStudentCoursesList, List<StudentsCoursesDTO> updateStudentsCoursesList) {
 
-    existStudentCoursesList.forEach(existStudentCourses -> {
-      updateStudentsCoursesList.forEach(updateStudentsCourses -> {
-        if(existStudentCourses.getId() == updateStudentsCourses.getId()) {
-          existStudentCourses.setCourseStartDate(updateStudentsCourses.getCourseStartDate());
-          existStudentCourses.setCourseEndDate(updateStudentsCourses.getCourseEndDate());
+    updateStudentsCoursesList.forEach(studentsCoursesDTO -> {
+      int courseId = coursesService.findByCourseName(studentsCoursesDTO.getCourseName());
+
+      existStudentCoursesList.forEach(studentsCourses -> {
+        if(studentsCourses.getCourseId() == courseId) {
+          studentsCourses.setCourseStartDate(studentsCoursesDTO.getCourseStartDate());
+          studentsCourses.setCourseEndDate(studentsCoursesDTO.getCourseEndDate());
+          studentsCoursesRepository.updateStudentsCourses(studentsCourses);
         }
       });
-
-      studentsCoursesRepository.updateStudentsCourses(existStudentCourses);
     });
   }
 
-  public String updateHandling(@Valid UpdateStudentForm form, int studentId,
-      BindingResult result) {
-    if (result.hasErrors()) {
-      throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());
-    }
+  public String updateHandling(@Valid UpdateStudentForm form) {
+//    if (result.hasErrors()) {
+//      throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());
+//    }
 
-    Student existStudent = studentsService.findByStudentId(studentId);
-    List<StudentsCourses> existStudentCourses = getStudentsCoursesList(studentId);
+    Student existStudent = studentsService.findByStudentId(form.getId());
+    List<StudentsCourses> existStudentCourses = getStudentsCoursesList(form.getId());
 
     studentsService.updateStudent(existStudent, form);
+
     updateStudentCourses(existStudentCourses, form.getStudentsCoursesList());
 
     return "更新が完了しました。";
