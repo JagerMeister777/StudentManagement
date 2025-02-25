@@ -79,6 +79,11 @@ public class StudentsService {
     repository.registerStudent(student);
   }
 
+  /**
+   * 受講生情報の更新処理
+   * @param existStudent 既に登録されている受講生情報
+   * @param form 受講生更新フォームに入力された情報
+   */
   @Transactional
   public void updateStudent(Student existStudent, UpdateStudentForm form) {
 

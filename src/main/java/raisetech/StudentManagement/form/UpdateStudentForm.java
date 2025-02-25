@@ -8,6 +8,10 @@ import lombok.Setter;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 
+/**
+ * 受講生更新画面のフォームに入力された情報をバインドします
+ */
+
 @Getter
 @Setter
 public class UpdateStudentForm {

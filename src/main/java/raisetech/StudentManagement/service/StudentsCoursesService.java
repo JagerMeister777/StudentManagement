@@ -197,6 +197,11 @@ public class StudentsCoursesService {
     }
   }
 
+  /**
+   * 受講生コース情報の更新処理
+   * @param existStudentCoursesList 既に登録されている受講生コース情報
+   * @param updateStudentsCoursesList 更新する受講生コース情報
+   */
   @Transactional
   public void updateStudentCourses(List<StudentsCourses> existStudentCoursesList, List<StudentsCoursesDTO> updateStudentsCoursesList) {
 
@@ -213,6 +218,12 @@ public class StudentsCoursesService {
     });
   }
 
+  /**
+   * 受講生情報の更新処理
+   * @param form 受講生更新フォームに入力された情報
+   * @param result エラー
+   * @return メッセージ
+   */
   public String updateHandling(@Valid UpdateStudentForm form,BindingResult result) {
     if (result.hasErrors()) {
       throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());

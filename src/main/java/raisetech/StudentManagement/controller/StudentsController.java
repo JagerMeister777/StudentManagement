@@ -127,6 +127,12 @@ public class StudentsController {
     }
   }
 
+  /**
+   * 受講生情報の詳細画面の表示
+   * @param id 受講生ID
+   * @param model 受講生情報、受講生コース情報DTO
+   * @return 受講生情報の詳細画面
+   */
   @GetMapping("/student/{id}")
   public String studentDetailView(@PathVariable("id") int id, Model model) {
 
@@ -137,6 +143,12 @@ public class StudentsController {
     return "studentDetail";
   }
 
+  /**
+   * 受講生情報の更新画面の表示
+   * @param id 受講生ID
+   * @param model 受講生更新フォーム
+   * @return 受講生更新画面
+   */
   @GetMapping("/update/student/{id}")
   public String updateStudentView(@PathVariable("id") int id, Model model) {
     Student student = studentsService.findByStudentId(id);
@@ -159,6 +171,15 @@ public class StudentsController {
     return "updateStudent";
   }
 
+  /**
+   * 受講生更新処理
+   * @param id 受講性ID
+   * @param form 受講生更新フォーム
+   * @param result エラーメッセージ
+   * @param model 更新処理が成功したら、受講生詳細画面。エラーが発生したら、更新画面。
+   * @param redirectAttributes 受講生詳細画面
+   * @return 画面遷移先
+   */
   @PostMapping("/update/student/{id}")
   public String updateStudent(
       @PathVariable("id") int id,
