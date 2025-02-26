@@ -1,22 +1,21 @@
 package raisetech.StudentManagement.service;
 
-import jakarta.validation.Valid;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.exceptions.ExistedStudentsCoursesException;
-import raisetech.StudentManagement.exceptions.UpdateFieldBindingException;
+import raisetech.StudentManagement.exceptions.ExistStudentsCoursesException;
+import raisetech.StudentManagement.exceptions.ExistStudentEmailException;
+import raisetech.StudentManagement.exceptions.InvalidEmailException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.form.UpdateStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
+import raisetech.StudentManagement.util.EmailNormalizer;
 
 /**
  * 受講生コース情報のService
@@ -127,7 +126,8 @@ public class StudentsCoursesService {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
 
       studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentId).getFullName());
-      studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
+      studentsCoursesDTO.setCourseName(
+          coursesService.findByCourseId(studentsCourses.getCourseId()));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
 
@@ -158,17 +158,14 @@ public class StudentsCoursesService {
   @Transactional
   public void registerStudentsCourses(RegisterStudentForm form) {
     Optional<Student> student = studentsService.findByEmail(form.getEmail());
-
     int studentId = student.get().getId();
     int courseId = coursesService.findByCourseName(form.getCourseName());
-
     StudentsCourses registerStudentsCourses = new StudentsCourses(
         studentId,
         courseId,
         form.getCourseStartDate(),
         form.getCourseEndDate()
     );
-
     studentsCoursesRepository.registerStudentsCourses(registerStudentsCourses);
   }
 
@@ -183,7 +180,7 @@ public class StudentsCoursesService {
     if (existedStudent.isPresent()) {
       // 既に登録されている場合
       if (isExistingCombination(existedStudent.get().getId(), form.getCourseName())) {
-        throw new ExistedStudentsCoursesException("登録するコースを既に受講しています。");
+        throw new ExistStudentsCoursesException("登録するコースを既に受講しています。");
       } else {
         // コース情報のみ登録
         registerStudentsCourses(form);
@@ -199,17 +196,17 @@ public class StudentsCoursesService {
 
   /**
    * 受講生コース情報の更新処理
-   * @param existStudentCoursesList 既に登録されている受講生コース情報
+   *
+   * @param existStudentCoursesList   既に登録されている受講生コース情報
    * @param updateStudentsCoursesList 更新する受講生コース情報
    */
   @Transactional
-  public void updateStudentCourses(List<StudentsCourses> existStudentCoursesList, List<StudentsCoursesDTO> updateStudentsCoursesList) {
-
+  public void updateStudentCourses(List<StudentsCourses> existStudentCoursesList,
+      List<StudentsCoursesDTO> updateStudentsCoursesList) {
     updateStudentsCoursesList.forEach(studentsCoursesDTO -> {
       int courseId = coursesService.findByCourseName(studentsCoursesDTO.getCourseName());
-
       existStudentCoursesList.forEach(studentsCourses -> {
-        if(studentsCourses.getCourseId() == courseId) {
+        if (studentsCourses.getCourseId() == courseId) {
           studentsCourses.setCourseStartDate(studentsCoursesDTO.getCourseStartDate());
           studentsCourses.setCourseEndDate(studentsCoursesDTO.getCourseEndDate());
           studentsCoursesRepository.updateStudentsCourses(studentsCourses);
@@ -220,20 +217,23 @@ public class StudentsCoursesService {
 
   /**
    * 受講生情報の更新処理
+   *
    * @param form 受講生更新フォームに入力された情報
-   * @param result エラー
    * @return メッセージ
    */
-  public String updateHandling(@Valid UpdateStudentForm form,BindingResult result) {
-    if (result.hasErrors()) {
-      throw new UpdateFieldBindingException("エラー: " + result.getAllErrors());
-    }
-
+  public String updateHandling(UpdateStudentForm form) {
+    Optional<Student> isExistedStudent = studentsService.findByEmail(form.getEmail());
+    String updateEmail = EmailNormalizer.normalizeEmail(form.getEmail());
+    if (isExistedStudent.isPresent() && !(isExistedStudent.get().getId() == form.getId())) {
+      throw new ExistStudentEmailException("既にメールアドレスが使われています。");
+    }else if(updateEmail == null) {
+      throw new InvalidEmailException("メールアドレスが不正です。");
+    }else{
+      form.setEmail(updateEmail);
+    };
     Student existStudent = studentsService.findByStudentId(form.getId());
     List<StudentsCourses> existStudentCourses = getStudentsCoursesList(form.getId());
-
     studentsService.updateStudent(existStudent, form);
-
     updateStudentCourses(existStudentCourses, form.getStudentsCoursesList());
 
     return "更新が完了しました。";

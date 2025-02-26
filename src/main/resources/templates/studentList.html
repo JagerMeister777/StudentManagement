@@ -41,7 +41,7 @@
           <td th:text="${studentDetail.student.age} + 歳">24</td>
           <td th:text="${studentDetail.student.gender}">男</td>
           <td th:text="${studentDetail.student.remark}">特になし</td>
-          <td><a th:href="@{/student/{id}(id=${studentDetail.student.id})}" class="btn btn-primary">更新</a></td>
+          <td><a th:href="@{/student/{id}(id=${studentDetail.student.id})}" class="btn btn-primary">詳細</a></td>
         </tr>
         </tbody>
       </table>

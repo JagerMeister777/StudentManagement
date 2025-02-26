@@ -81,12 +81,12 @@ public class StudentsService {
 
   /**
    * 受講生情報の更新処理
+   *
    * @param existStudent 既に登録されている受講生情報
-   * @param form 受講生更新フォームに入力された情報
+   * @param form         受講生更新フォームに入力された情報
    */
   @Transactional
   public void updateStudent(Student existStudent, UpdateStudentForm form) {
-
     existStudent.setFullName(form.getFullName());
     existStudent.setFurigana(form.getFurigana());
     existStudent.setNickName(form.getNickName());
