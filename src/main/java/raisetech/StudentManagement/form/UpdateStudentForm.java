@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
 
 /**
@@ -28,7 +27,7 @@ public class UpdateStudentForm {
   private String nickName;
 
   @NotBlank(message = "メールアドレスを入力してください。")
-  @Email(message = "メールアドレスの形式が不正です。")
+  @Email(message = "正しいメールアドレスを入力してください。")
   private String email;
 
   @NotBlank(message = "住んでいる地域を入力してください。")

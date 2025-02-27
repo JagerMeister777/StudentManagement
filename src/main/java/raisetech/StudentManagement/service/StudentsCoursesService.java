@@ -11,11 +11,9 @@ import raisetech.StudentManagement.data.StudentsCoursesDTO;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.exceptions.ExistStudentsCoursesException;
 import raisetech.StudentManagement.exceptions.ExistStudentEmailException;
-import raisetech.StudentManagement.exceptions.InvalidEmailException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.form.UpdateStudentForm;
 import raisetech.StudentManagement.repository.StudentsCoursesRepository;
-import raisetech.StudentManagement.util.EmailNormalizer;
 
 /**
  * 受講生コース情報のService
@@ -223,13 +221,8 @@ public class StudentsCoursesService {
    */
   public String updateHandling(UpdateStudentForm form) {
     Optional<Student> isExistedStudent = studentsService.findByEmail(form.getEmail());
-    String updateEmail = EmailNormalizer.normalizeEmail(form.getEmail());
     if (isExistedStudent.isPresent() && !(isExistedStudent.get().getId() == form.getId())) {
       throw new ExistStudentEmailException("既にメールアドレスが使われています。");
-    }else if(updateEmail == null) {
-      throw new InvalidEmailException("メールアドレスが不正です。");
-    }else{
-      form.setEmail(updateEmail);
     };
     Student existStudent = studentsService.findByStudentId(form.getId());
     List<StudentsCourses> existStudentCourses = getStudentsCoursesList(form.getId());

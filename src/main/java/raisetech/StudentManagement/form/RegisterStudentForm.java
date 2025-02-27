@@ -2,6 +2,7 @@ package raisetech.StudentManagement.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class RegisterStudentForm {
   private String nickName;
 
   @NotBlank(message = "メールアドレスを入力してください。")
-  @Email(message = "メールアドレスの形式が不正です。")
+  @Email(message = "正しいメールアドレスを入力してください。")
   private String email;
 
   @NotBlank(message = "住んでいる地域を入力してください。")
@@ -39,15 +40,15 @@ public class RegisterStudentForm {
   private String remark;
   private boolean isDeleted;
 
-  @NotBlank
+  @NotBlank(message = "受講するコースを選択してください。")
   private String courseName;
 
+  @NotNull(message = "開始日は必須です。")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-  @NotBlank
   private LocalDateTime courseStartDate;
 
+  @NotNull(message = "終了日は必須です。")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-  @NotBlank
   private LocalDateTime courseEndDate;
 
 }

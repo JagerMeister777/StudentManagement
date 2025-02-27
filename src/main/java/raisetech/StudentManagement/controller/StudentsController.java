@@ -1,11 +1,15 @@
 package raisetech.StudentManagement.controller;
 
-import jakarta.validation.Valid;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
+import raisetech.StudentManagement.exceptions.InvalidDateRangeException;
 import raisetech.StudentManagement.exceptions.ExistStudentsCoursesException;
 import raisetech.StudentManagement.exceptions.ExistStudentEmailException;
-import raisetech.StudentManagement.exceptions.InvalidEmailException;
 import raisetech.StudentManagement.form.RegisterStudentForm;
 import raisetech.StudentManagement.form.UpdateStudentForm;
 import raisetech.StudentManagement.service.CoursesService;
@@ -37,7 +41,16 @@ public class StudentsController {
    */
   private StudentsCoursesService studentsCoursesService;
 
+  /**
+   * 受講生情報のコンバーター
+   */
   private StudentConverter studentConverter;
+
+  /**
+   * Hibernate Validator
+   */
+  private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+  private Validator validator = factory.getValidator();
 
   @Autowired
   public StudentsController(StudentsService studentsService, CoursesService coursesService,
@@ -119,6 +132,19 @@ public class StudentsController {
   public String registerStudent(Model model, @ModelAttribute RegisterStudentForm form,
       RedirectAttributes redirectAttributes) {
     try {
+      Set<ConstraintViolation<RegisterStudentForm>> violations = validator.validate(form);
+      if (!violations.isEmpty()) {
+        List<String> messageList = new ArrayList<>();
+        model.addAttribute("registerStudentForm", form);
+        model.addAttribute("coursesList", coursesService.getCoursesList());
+        for (ConstraintViolation<RegisterStudentForm> violation : violations) {
+          messageList.add(violation.getMessage());
+        }
+        model.addAttribute("messageList", messageList);
+        return "registerStudent";
+      }else if(form.getCourseEndDate().isBefore(form.getCourseStartDate())) {
+        throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
+      }
       String message = studentsCoursesService.registerHandling(form);
       if (message.contains("コース情報が登録されました。")) {
         redirectAttributes.addFlashAttribute("message", message);
@@ -127,7 +153,7 @@ public class StudentsController {
         redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/studentsList";
       }
-    } catch (ExistStudentsCoursesException e) {
+    } catch (ExistStudentsCoursesException | InvalidDateRangeException e) {
       model.addAttribute("message", e.getMessage());
       model.addAttribute("coursesList", coursesService.getCoursesList());
       model.addAttribute("registerStudentForm", form);
@@ -183,7 +209,6 @@ public class StudentsController {
    *
    * @param id                 受講性ID
    * @param form               受講生更新フォーム
-   * @param result             エラーメッセージ
    * @param model              更新処理が成功したら、受講生詳細画面。エラーが発生したら、更新画面。
    * @param redirectAttributes 受講生詳細画面
    * @return 画面遷移先
@@ -191,20 +216,29 @@ public class StudentsController {
   @PostMapping("/update/student/{id}")
   public String updateStudent(
       @PathVariable("id") int id,
-      @Valid @ModelAttribute("updateStudentForm") UpdateStudentForm form,
-      BindingResult result,
+      @ModelAttribute("updateStudentForm") UpdateStudentForm form,
       Model model,
       RedirectAttributes redirectAttributes) {
     try {
-      if (result.hasErrors()) {
+      Set<ConstraintViolation<UpdateStudentForm>> violations = validator.validate(form);
+      if (!violations.isEmpty()) {
+        List<String> messageList = new ArrayList<>();
         model.addAttribute("updateStudentForm", form);
-        model.addAttribute("message", result);
+        for(ConstraintViolation<UpdateStudentForm> violation : violations) {
+          messageList.add(violation.getMessage());
+        }
+        model.addAttribute("messageList", messageList);
         return "updateStudent";
       }
+      form.getStudentsCoursesList().forEach(studentsCoursesDTO -> {
+        if(studentsCoursesDTO.getCourseEndDate().isBefore(studentsCoursesDTO.getCourseStartDate())) {
+          throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
+        }
+      });
       String message = studentsCoursesService.updateHandling(form);
       redirectAttributes.addFlashAttribute("message", message);
       return "redirect:/student/" + id;
-    } catch (ExistStudentEmailException | InvalidEmailException e) {
+    } catch (ExistStudentEmailException | InvalidDateRangeException e) {
       model.addAttribute("updateStudentForm", form);
       model.addAttribute("message", e.getMessage());
       return "updateStudent";
