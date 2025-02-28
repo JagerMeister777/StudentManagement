@@ -1,15 +1,15 @@
 package raisetech.StudentManagement.controller;
 
-import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,12 +45,6 @@ public class StudentsController {
    * 受講生情報のコンバーター
    */
   private StudentConverter studentConverter;
-
-  /**
-   * Hibernate Validator
-   */
-  private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-  private Validator validator = factory.getValidator();
 
   @Autowired
   public StudentsController(StudentsService studentsService, CoursesService coursesService,
@@ -129,18 +123,14 @@ public class StudentsController {
    * @return 受講生の新規登録 → 受講生一覧、受講生が登録済み → 受講生コース情報一覧
    */
   @PostMapping("/register/student")
-  public String registerStudent(Model model, @ModelAttribute RegisterStudentForm form,
+  public String registerStudent(Model model,
+      @Valid @ModelAttribute RegisterStudentForm form,
+      BindingResult result,
       RedirectAttributes redirectAttributes) {
     try {
-      Set<ConstraintViolation<RegisterStudentForm>> violations = validator.validate(form);
-      if (!violations.isEmpty()) {
-        List<String> messageList = new ArrayList<>();
+      if (result.hasErrors()) {
         model.addAttribute("registerStudentForm", form);
         model.addAttribute("coursesList", coursesService.getCoursesList());
-        for (ConstraintViolation<RegisterStudentForm> violation : violations) {
-          messageList.add(violation.getMessage());
-        }
-        model.addAttribute("messageList", messageList);
         return "registerStudent";
       }else if(form.getCourseEndDate().isBefore(form.getCourseStartDate())) {
         throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
@@ -216,18 +206,13 @@ public class StudentsController {
   @PostMapping("/update/student/{id}")
   public String updateStudent(
       @PathVariable("id") int id,
-      @ModelAttribute("updateStudentForm") UpdateStudentForm form,
+      @Valid @ModelAttribute("updateStudentForm") UpdateStudentForm form,
+      BindingResult result,
       Model model,
       RedirectAttributes redirectAttributes) {
     try {
-      Set<ConstraintViolation<UpdateStudentForm>> violations = validator.validate(form);
-      if (!violations.isEmpty()) {
-        List<String> messageList = new ArrayList<>();
+      if (result.hasErrors()) {
         model.addAttribute("updateStudentForm", form);
-        for(ConstraintViolation<UpdateStudentForm> violation : violations) {
-          messageList.add(violation.getMessage());
-        }
-        model.addAttribute("messageList", messageList);
         return "updateStudent";
       }
       form.getStudentsCoursesList().forEach(studentsCoursesDTO -> {
