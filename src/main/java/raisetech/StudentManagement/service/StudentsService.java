@@ -99,4 +99,8 @@ public class StudentsService {
     repository.updateStudent(existStudent);
 
   }
+
+  public void deleteStudent(int id) {
+    repository.deleteStudent(id,true);
+  }
 }
