@@ -244,4 +244,11 @@ public class StudentsController {
       return "updateStudent";
     }
   }
+
+  @PostMapping("/delete/student/{id}")
+  public String deleteStudent(@PathVariable("id") int id, Model model) {
+    studentsService.deleteStudent(id);
+    model.addAttribute("message",studentsService.findByStudentId(id).getFullName() + "を削除しました。");
+    return "redirect:/studentsList";
+  }
 }
