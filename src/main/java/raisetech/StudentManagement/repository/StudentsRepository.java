@@ -48,4 +48,7 @@ public interface StudentsRepository {
    */
   @Update("UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, nick_name = #{nickName}, email = #{email}, living_area = #{livingArea}, age = #{age}, gender = #{gender}, remark = #{remark}, isDeleted = #{isDeleted} WHERE id = #{id}")
   void updateStudent(Student student);
+
+  @Update("UPDATE students SET  isDeleted = #{isDeleted} WHERE id = #{id}")
+  void deleteStudent(int id,boolean isDeleted);
 }
