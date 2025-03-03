@@ -245,7 +245,7 @@ public class StudentsController {
     }
   }
 
-  @PostMapping("/delete/student/{id}")
+  @GetMapping("/delete/student/{id}")
   public String deleteStudent(@PathVariable("id") int id, Model model) {
     studentsService.deleteStudent(id);
     model.addAttribute("message",studentsService.findByStudentId(id).getFullName() + "を削除しました。");
