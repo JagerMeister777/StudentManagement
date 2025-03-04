@@ -65,12 +65,13 @@ public class StudentsCoursesService {
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
     allStudentsCoursesList.forEach(studentsCourses -> {
       studentList.forEach(student -> {
-        if(studentsCourses.getStudentId() == student.getId()) {
-          StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
-          studentsCoursesDTO.setStudentName(student.getFullName());
-          studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
-          studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
-          studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
+        if (studentsCourses.getStudentId() == student.getId()) {
+          StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO(
+              student.getFullName(),
+              coursesService.findByCourseId(studentsCourses.getCourseId()),
+              studentsCourses.getCourseStartDate(),
+              studentsCourses.getCourseEndDate()
+          );
           studentsCoursesDTOList.add(studentsCoursesDTO);
         }
       });
@@ -89,12 +90,12 @@ public class StudentsCoursesService {
         JAVA_COURSE_ID);
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
     for (StudentsCourses studentsCourses : javaStudentsList) {
-      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
-      studentsCoursesDTO.setStudentName(
-          studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
-      studentsCoursesDTO.setCourseName(coursesService.findByCourseId(JAVA_COURSE_ID));
-      studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
-      studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
+      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO(
+          studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName(),
+          coursesService.findByCourseId(JAVA_COURSE_ID),
+          studentsCourses.getCourseStartDate(),
+          studentsCourses.getCourseEndDate()
+      );
       studentsCoursesDTOList.add(studentsCoursesDTO);
     }
     return studentsCoursesDTOList;
@@ -104,12 +105,12 @@ public class StudentsCoursesService {
     List<StudentsCourses> studentsCoursesList = getStudentsCoursesList(studentId);
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
     for (StudentsCourses studentsCourses : studentsCoursesList) {
-      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
-      studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentId).getFullName());
-      studentsCoursesDTO.setCourseName(
-          coursesService.findByCourseId(studentsCourses.getCourseId()));
-      studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
-      studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
+      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO(
+          studentsService.findByStudentId(studentId).getFullName(),
+          coursesService.findByCourseId(studentsCourses.getCourseId()),
+          studentsCourses.getCourseStartDate(),
+          studentsCourses.getCourseEndDate()
+      );
       studentsCoursesDTOList.add(studentsCoursesDTO);
     }
     return studentsCoursesDTOList;
@@ -203,7 +204,8 @@ public class StudentsCoursesService {
     Optional<Student> isExistedStudent = studentsService.findByEmail(form.getEmail());
     if (isExistedStudent.isPresent() && !(isExistedStudent.get().getId() == form.getId())) {
       throw new ExistStudentEmailException("既にメールアドレスが使われています。");
-    };
+    }
+    ;
     Student existStudent = studentsService.findByStudentId(form.getId());
     List<StudentsCourses> existStudentCourses = getStudentsCoursesList(form.getId());
     studentsService.updateStudent(existStudent, form);
