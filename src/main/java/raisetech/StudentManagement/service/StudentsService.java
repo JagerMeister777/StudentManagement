@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +27,18 @@ public class StudentsService {
   }
 
   /**
-   * 30歳の受講生の検索
+   * 受講生リストの出力
    *
-   * @return 30歳の受講生リスト
+   * @return 受講生リスト（削除済みの受講生は除外）
    */
   public List<Student> getStudentsList() {
-    // 抽出したリストをコントローラーに渡す。
-    // TODO 例外処理の実装
-    return repository.getStudentsList();
+    List<Student> studentList = new ArrayList<>();
+    repository.getStudentsList().forEach(student -> {
+      if (!student.isDeleted()) {
+        studentList.add(student);
+      }
+    });
+    return studentList;
   }
 
   /**
@@ -43,7 +48,7 @@ public class StudentsService {
    * @return 受講生のフルネーム
    */
   public Student findByStudentId(int id) {
-    // TODO 例外処理の実装
+
     return repository.findByStudentId(id);
   }
 

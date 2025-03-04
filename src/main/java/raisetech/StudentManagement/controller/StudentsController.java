@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
@@ -85,13 +87,13 @@ public class StudentsController {
    * 受講生リストをテンプレートにレンダリング
    *
    * @param model 受講生リスト
-   * @return studentList.html
+   * @return studentsList.html
    */
   @GetMapping("/studentsList")
   public String getStudentDetail(Model model) {
     model.addAttribute("studentList",
         studentConverter.studentConverter(studentsService.getStudentsList()));
-    return "studentList";
+    return "studentsList";
   }
 
   /**
@@ -142,7 +144,7 @@ public class StudentsController {
         }
         model.addAttribute("messageList", messageList);
         return "registerStudent";
-      }else if(form.getCourseEndDate().isBefore(form.getCourseStartDate())) {
+      } else if (form.getCourseEndDate().isBefore(form.getCourseStartDate())) {
         throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
       }
       String message = studentsCoursesService.registerHandling(form);
@@ -231,7 +233,8 @@ public class StudentsController {
         return "updateStudent";
       }
       form.getStudentsCoursesList().forEach(studentsCoursesDTO -> {
-        if(studentsCoursesDTO.getCourseEndDate().isBefore(studentsCoursesDTO.getCourseStartDate())) {
+        if (studentsCoursesDTO.getCourseEndDate()
+            .isBefore(studentsCoursesDTO.getCourseStartDate())) {
           throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
         }
       });
@@ -246,9 +249,10 @@ public class StudentsController {
   }
 
   @GetMapping("/delete/student/{id}")
-  public String deleteStudent(@PathVariable("id") int id, Model model) {
+  public String deleteStudent(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
     studentsService.deleteStudent(id);
-    model.addAttribute("message",studentsService.findByStudentId(id).getFullName() + "を削除しました。");
+    redirectAttributes.addFlashAttribute("message",
+        studentsService.findByStudentId(id).getFullName() + " を削除しました。");
     return "redirect:/studentsList";
   }
 }
