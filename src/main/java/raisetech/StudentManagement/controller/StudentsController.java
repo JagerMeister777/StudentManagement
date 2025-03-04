@@ -27,22 +27,17 @@ import raisetech.StudentManagement.service.StudentsService;
 @Controller
 public class StudentsController {
 
-  /**
-   * 受講生情報のService
-   */
-  private StudentsService studentsService;
+  /** 受講生情報のService */
+  private final StudentsService studentsService;
 
-  private CoursesService coursesService;
+  /** コース情報のService */
+  private final CoursesService coursesService;
 
-  /**
-   * 受講生コース情報のService
-   */
-  private StudentsCoursesService studentsCoursesService;
+  /** 受講生コース情報のService */
+  private final StudentsCoursesService studentsCoursesService;
 
-  /**
-   * 受講生情報のコンバーター
-   */
-  private StudentConverter studentConverter;
+  /** 受講生情報のコンバーター */
+  private final StudentConverter studentConverter;
 
   @Autowired
   public StudentsController(StudentsService studentsService, CoursesService coursesService,

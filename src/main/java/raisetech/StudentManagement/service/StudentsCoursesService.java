@@ -21,20 +21,14 @@ import raisetech.StudentManagement.repository.StudentsCoursesRepository;
 @Service
 public class StudentsCoursesService {
 
-  /**
-   * 受講生情報のService
-   */
-  private StudentsService studentsService;
+  /** 受講生情報のService */
+  private final StudentsService studentsService;
 
-  /**
-   * コース情報のService
-   */
-  private CoursesService coursesService;
+  /** コース情報のService */
+  private final CoursesService coursesService;
 
-  /**
-   * 受講生コース情報のRepository
-   */
-  private StudentsCoursesRepository studentsCoursesRepository;
+  /** 受講生コース情報のRepository */
+  private final StudentsCoursesRepository studentsCoursesRepository;
 
   @Autowired
   public StudentsCoursesService(StudentsService studentsService,

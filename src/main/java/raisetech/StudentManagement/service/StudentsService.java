@@ -16,10 +16,8 @@ import raisetech.StudentManagement.repository.StudentsRepository;
 @Service
 public class StudentsService {
 
-  /**
-   * 学生情報のRepository
-   */
-  private StudentsRepository repository;
+  /** 学生情報のRepository */
+  private final StudentsRepository repository;
 
   @Autowired
   public StudentsService(StudentsRepository repository) {
