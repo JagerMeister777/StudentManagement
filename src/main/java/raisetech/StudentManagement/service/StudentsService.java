@@ -105,7 +105,11 @@ public class StudentsService {
 
   }
 
+  /**
+   * 受講生情報の論理削除
+   * @param id 受講生ID
+   */
   public void deleteStudent(int id) {
-    repository.deleteStudent(id,true);
+    repository.deleteStudent(id, true);
   }
 }

@@ -61,22 +61,20 @@ public class StudentsCoursesService {
    */
   public List<StudentsCoursesDTO> getAllStudentsCoursesList() {
     List<StudentsCourses> allStudentsCoursesList = studentsCoursesRepository.getAllStudentsCoursesList();
-
+    List<Student> studentList = studentsService.getStudentsList();
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
-
-    for (StudentsCourses studentsCourses : allStudentsCoursesList) {
-      StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
-
-      studentsCoursesDTO.setStudentName(
-          studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
-      studentsCoursesDTO.setCourseName(
-          coursesService.findByCourseId(studentsCourses.getCourseId()));
-      studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
-      studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
-
-      studentsCoursesDTOList.add(studentsCoursesDTO);
-    }
-
+    allStudentsCoursesList.forEach(studentsCourses -> {
+      studentList.forEach(student -> {
+        if(studentsCourses.getStudentId() == student.getId()) {
+          StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
+          studentsCoursesDTO.setStudentName(student.getFullName());
+          studentsCoursesDTO.setCourseName(coursesService.findByCourseId(studentsCourses.getCourseId()));
+          studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
+          studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
+          studentsCoursesDTOList.add(studentsCoursesDTO);
+        }
+      });
+    });
     return studentsCoursesDTOList;
   }
 
@@ -86,52 +84,34 @@ public class StudentsCoursesService {
    * @return Javaフルコースの受講生リスト
    */
   public List<StudentsCoursesDTO> getJavaStudentsCoursesList() {
-    // 「Javaフルコース」のIDを取得して、「Javaフルコース」のコース情報のみを抽出する。
-    //  受講生IDから参照して絞り込みした学生リストをコントローラーに渡す。
-
-    // ID:1はJavaフルコース
-    // TODO 動的にコース名で検索できるようにする
     final int JAVA_COURSE_ID = 1;
-
-    // 対象のコースを受講している受講生情報の全件取得
     List<StudentsCourses> javaStudentsList = studentsCoursesRepository.javaStudentsList(
         JAVA_COURSE_ID);
-
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
-
-    // DTOクラスで出力
     for (StudentsCourses studentsCourses : javaStudentsList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
-
       studentsCoursesDTO.setStudentName(
           studentsService.findByStudentId(studentsCourses.getStudentId()).getFullName());
       studentsCoursesDTO.setCourseName(coursesService.findByCourseId(JAVA_COURSE_ID));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
-
       studentsCoursesDTOList.add(studentsCoursesDTO);
     }
-
     return studentsCoursesDTOList;
   }
 
   public List<StudentsCoursesDTO> getStudentsCoursesDTO(int studentId) {
     List<StudentsCourses> studentsCoursesList = getStudentsCoursesList(studentId);
     List<StudentsCoursesDTO> studentsCoursesDTOList = new ArrayList<>();
-
-    // DTOクラスで出力
     for (StudentsCourses studentsCourses : studentsCoursesList) {
       StudentsCoursesDTO studentsCoursesDTO = new StudentsCoursesDTO();
-
       studentsCoursesDTO.setStudentName(studentsService.findByStudentId(studentId).getFullName());
       studentsCoursesDTO.setCourseName(
           coursesService.findByCourseId(studentsCourses.getCourseId()));
       studentsCoursesDTO.setCourseStartDate(studentsCourses.getCourseStartDate());
       studentsCoursesDTO.setCourseEndDate(studentsCourses.getCourseEndDate());
-
       studentsCoursesDTOList.add(studentsCoursesDTO);
     }
-
     return studentsCoursesDTOList;
   }
 
