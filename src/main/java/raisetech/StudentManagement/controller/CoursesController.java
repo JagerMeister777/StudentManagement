@@ -11,7 +11,7 @@ import raisetech.StudentManagement.service.CoursesService;
 public class CoursesController {
 
   /**　コース情報のService　*/
-  private CoursesService service;
+  private final CoursesService service;
 
   @Autowired
   public CoursesController(CoursesService service) {

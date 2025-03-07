@@ -11,7 +11,7 @@ import raisetech.StudentManagement.repository.CoursesRepository;
 public class CoursesService {
 
   /** コース情報のRepository */
-  private CoursesRepository repository;
+  private final CoursesRepository repository;
 
   @Autowired
   public CoursesService(CoursesRepository repository) {
@@ -24,7 +24,6 @@ public class CoursesService {
    * @return コース情報の全件リスト
    */
   public List<Course> getCoursesList(){
-    // TODO 例外処理の実装
     return repository.getCoursesList();
   }
 
@@ -34,7 +33,6 @@ public class CoursesService {
    * @return コース名
    */
   public String findByCourseId(int id) {
-    // TODO 例外処理の実装
     Course course = repository.findByCourseId(id);
     return course.getName();
   }

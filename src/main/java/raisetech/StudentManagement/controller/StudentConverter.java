@@ -13,7 +13,8 @@ import raisetech.StudentManagement.service.StudentsCoursesService;
 @Component
 public class StudentConverter {
 
-  private StudentsCoursesService studentsCoursesService;
+  /** 受講生コース情報のService */
+  private final StudentsCoursesService studentsCoursesService;
 
   @Autowired
   public StudentConverter(StudentsCoursesService studentsCoursesService) {
