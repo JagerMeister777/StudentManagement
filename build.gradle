@@ -31,8 +31,8 @@ dependencies {
 	// Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	// Hibernate Validator
-	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+	// Spring Boot Starter Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// 追加機能、ユーティリティ
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'

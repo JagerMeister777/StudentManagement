@@ -15,18 +15,14 @@
   <div class="row">
     <div class="col">
       <h4 class="mt-3">受講生情報更新フォーム</h4>
-      <div class="alert alert-danger" role="alert"
-           th:if="${message != null and not #strings.isEmpty(message)}">
-        <span th:text="${message}"></span>
-      </div>
-      <div class="alert alert-danger" role="alert"
-           th:if="${messageList != null and not #lists.isEmpty(messageList)}">
-        <ul class="list-group list-unstyled">
-          <li th:each="message : ${messageList}" th:text="${message}"></li>
-        </ul>
-      </div>
       <form th:action="@{/update/student/{id}(id=${id})}" method="post"
             th:object="${updateStudentForm}">
+        <div class="alert alert-danger" role="alert"
+             th:if="${#fields.hasErrors('*')}">
+          <ul class="list-group">
+            <li class="list-unstyled" th:each="err : ${#fields.allErrors}" th:text="${err}"></li>
+          </ul>
+        </div>
         <input type="hidden" id="id" th:field="*{id}">
         <div class="form-group mb-2">
           <label for="fullName">氏名</label>
