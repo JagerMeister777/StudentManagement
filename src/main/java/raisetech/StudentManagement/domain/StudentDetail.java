@@ -11,7 +11,15 @@ import raisetech.StudentManagement.data.StudentsCourses;
 public class StudentDetail {
 
   private Student student;
-
   private List<StudentsCourses> studentsCoursesList;
+
+  public StudentDetail() {
+
+  }
+
+  public StudentDetail(Student student, List<StudentsCourses> studentsCoursesList) {
+    this.student = student;
+    this.studentsCoursesList = studentsCoursesList;
+  }
 
 }

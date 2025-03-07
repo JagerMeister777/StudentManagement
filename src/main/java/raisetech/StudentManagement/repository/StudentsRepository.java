@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import raisetech.StudentManagement.data.Student;
 
 /**　受講生情報のRepository　*/
@@ -39,5 +40,12 @@ public interface StudentsRepository {
    * @param student 受講生情報
    */
   @Insert("INSERT INTO students (full_name, furigana, nick_name, email, living_area, age, gender, remark, isDeleted) VALUES (#{fullName}, #{furigana}, #{nickName}, #{email}, #{livingArea}, #{age}, #{gender}, #{remark}, #{isDeleted});")
-  void save(Student student);
+  void registerStudent(Student student);
+
+  /**
+   * 受講生情報の更新
+   * @param student 受講生情報
+   */
+  @Update("UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, nick_name = #{nickName}, email = #{email}, living_area = #{livingArea}, age = #{age}, gender = #{gender}, remark = #{remark}, isDeleted = #{isDeleted} WHERE id = #{id}")
+  void updateStudent(Student student);
 }

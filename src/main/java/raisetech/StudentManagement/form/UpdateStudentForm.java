@@ -2,19 +2,20 @@ package raisetech.StudentManagement.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
+import raisetech.StudentManagement.data.StudentsCoursesDTO;
 
 /**
- * 受講生登録画面のフォームに入力された情報をバインドします。
+ * 受講生更新画面のフォームに入力された情報をバインドします
  */
 
 @Getter
 @Setter
-public class RegisterStudentForm {
+public class UpdateStudentForm {
+
+  private int id;
 
   @NotBlank(message = "名前を入力してください。")
   private String fullName;
@@ -40,15 +41,25 @@ public class RegisterStudentForm {
   private String remark;
   private boolean isDeleted;
 
-  @NotBlank(message = "受講するコースを選択してください。")
-  private String courseName;
+  List<StudentsCoursesDTO> studentsCoursesList;
 
-  @NotNull(message = "開始日は必須です。")
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-  private LocalDateTime courseStartDate;
+  public UpdateStudentForm(int id, String fullName, String furigana, String nickName, String email,
+      String livingArea, int age, String gender, String remark, boolean isDeleted,
+      List<StudentsCoursesDTO> studentsCoursesList) {
+    this.id = id;
+    this.fullName = fullName;
+    this.furigana = furigana;
+    this.nickName = nickName;
+    this.email = email;
+    this.livingArea = livingArea;
+    this.age = age;
+    this.gender = gender;
+    this.remark = remark;
+    this.isDeleted = isDeleted;
+    this.studentsCoursesList = studentsCoursesList;
+  }
 
-  @NotNull(message = "終了日は必須です。")
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-  private LocalDateTime courseEndDate;
-
+  public boolean getIsDeleted() {  // 明示的に getter を定義
+    return isDeleted;
+  }
 }

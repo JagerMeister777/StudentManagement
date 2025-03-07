@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.form.RegisterStudentForm;
 
 /**　受講生コース情報のRepository　*/
 @Mapper
@@ -43,10 +43,20 @@ public interface StudentsCoursesRepository {
   @Select("SELECT * FROM students_courses WHERE student_id = #{studentId} AND course_id = #{courseId}")
   Optional<StudentsCourses> isExistingCombination(int studentId, int courseId);
 
+  @Select("SELECT * FROM students_courses WHERE student_id = #{studentId} AND course_id = #{courseId}")
+  StudentsCourses getOneStudentsCourses(int studentId, int courseId);
+
   /**
    * 受講生コース情報の登録
    * @param studentsCourses 受講生コース情報
    */
   @Select("INSERT INTO students_courses (student_id, course_id, course_start_date, course_end_date) VALUES (#{studentId}, #{courseId}, #{courseStartDate}, #{courseEndDate});")
-  void save(StudentsCourses studentsCourses);
+  void registerStudentsCourses(StudentsCourses studentsCourses);
+
+  /**
+   * 受講生コース情報の更新
+   * @param studentsCourses 受講生コース情報
+   */
+  @Update("UPDATE students_courses SET id = #{id}, student_id = #{studentId}, course_id = #{courseId}, course_start_date = #{courseStartDate}, course_end_date = #{courseEndDate} WHERE id = #{id}")
+  void updateStudentsCourses(StudentsCourses studentsCourses);
 }
