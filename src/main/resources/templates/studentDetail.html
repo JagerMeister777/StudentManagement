@@ -69,8 +69,14 @@
           </td>
         </tr>
       </table>
-      <a th:href="@{/update/student/{id}(id = ${student.id})}" class="btn btn-primary">更新</a>
-      <a th:href="@{/delete/student/{id}(id = ${student.id})}" class="btn btn-danger">削除</a>
+      <div class="mt-3 mb-3">
+        <a th:href="@{/update/student/{id}(id = ${student.id})}" class="btn btn-primary">更新</a>
+        <form class="d-inline-block" th:action="@{/delete/student/{id}(id=${student.id})}" method="post">
+          <input type="hidden" name="_method" value="PATCH"/>
+          <input type="hidden" name="isDeleted" value="true">
+          <button class="btn btn-danger">削除</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

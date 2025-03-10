@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -224,7 +225,7 @@ public class StudentsController {
     }
   }
 
-  @GetMapping("/delete/student/{id}")
+  @PatchMapping("/delete/student/{id}")
   public String deleteStudent(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
     studentsService.deleteStudent(id);
     redirectAttributes.addFlashAttribute("message",
