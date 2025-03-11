@@ -1,10 +1,6 @@
 package raisetech.StudentManagement.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,8 +8,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCoursesDTO;
@@ -29,22 +28,17 @@ import raisetech.StudentManagement.service.StudentsService;
 @Controller
 public class StudentsController {
 
-  /**
-   * 受講生情報のService
-   */
-  private StudentsService studentsService;
+  /** 受講生情報のService */
+  private final StudentsService studentsService;
 
-  private CoursesService coursesService;
+  /** コース情報のService */
+  private final CoursesService coursesService;
 
-  /**
-   * 受講生コース情報のService
-   */
-  private StudentsCoursesService studentsCoursesService;
+  /** 受講生コース情報のService */
+  private final StudentsCoursesService studentsCoursesService;
 
-  /**
-   * 受講生情報のコンバーター
-   */
-  private StudentConverter studentConverter;
+  /** 受講生情報のコンバーター */
+  private final StudentConverter studentConverter;
 
   @Autowired
   public StudentsController(StudentsService studentsService, CoursesService coursesService,
@@ -79,13 +73,13 @@ public class StudentsController {
    * 受講生リストをテンプレートにレンダリング
    *
    * @param model 受講生リスト
-   * @return studentList.html
+   * @return studentsList.html
    */
   @GetMapping("/studentsList")
   public String getStudentDetail(Model model) {
     model.addAttribute("studentList",
         studentConverter.studentConverter(studentsService.getStudentsList()));
-    return "studentList";
+    return "studentsList";
   }
 
   /**
@@ -132,7 +126,7 @@ public class StudentsController {
         model.addAttribute("registerStudentForm", form);
         model.addAttribute("coursesList", coursesService.getCoursesList());
         return "registerStudent";
-      }else if(form.getCourseEndDate().isBefore(form.getCourseStartDate())) {
+      } else if (form.getCourseEndDate().isBefore(form.getCourseStartDate())) {
         throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
       }
       String message = studentsCoursesService.registerHandling(form);
@@ -216,7 +210,8 @@ public class StudentsController {
         return "updateStudent";
       }
       form.getStudentsCoursesList().forEach(studentsCoursesDTO -> {
-        if(studentsCoursesDTO.getCourseEndDate().isBefore(studentsCoursesDTO.getCourseStartDate())) {
+        if (studentsCoursesDTO.getCourseEndDate()
+            .isBefore(studentsCoursesDTO.getCourseStartDate())) {
           throw new InvalidDateRangeException("終了日は開始日より後でなければなりません。");
         }
       });
@@ -228,5 +223,13 @@ public class StudentsController {
       model.addAttribute("message", e.getMessage());
       return "updateStudent";
     }
+  }
+
+  @PatchMapping("/delete/student/{id}")
+  public String deleteStudent(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+    studentsService.deleteStudent(id);
+    redirectAttributes.addFlashAttribute("message",
+        studentsService.findByStudentId(id).getFullName() + " を削除しました。");
+    return "redirect:/studentsList";
   }
 }

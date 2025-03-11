@@ -18,4 +18,12 @@ public class StudentsCoursesDTO {
   private String courseName;
   private LocalDateTime courseStartDate;
   private LocalDateTime courseEndDate;
+
+  public StudentsCoursesDTO(String studentName, String courseName, LocalDateTime courseStartDate,
+      LocalDateTime courseEndDate) {
+    this.studentName = studentName;
+    this.courseName = courseName;
+    this.courseStartDate = courseStartDate;
+    this.courseEndDate = courseEndDate;
+  }
 }
